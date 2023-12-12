@@ -1,0 +1,14 @@
+﻿@model MobilityAssist.Models.User
+
+@{
+    ViewBag.Title = "UserDashboard";
+}
+
+<fieldset>
+    <legend>User Dashboard</legend>
+
+    @if (Session["FirstName"] != null)
+    {
+        <text>Welcome, @Session["FirstName"].ToString()</text>
+    }
+</fieldset>
