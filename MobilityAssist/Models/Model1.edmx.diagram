@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="7a09ec01fd35401a9cfe0524e6e23c59" Name="Diagram1" ZoomLevel="65">
+        <EntityTypeShape EntityType="MobilityAssistModel.Address" Width="1.5" PointX="3" PointY="2.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MobilityAssistModel.Building" Width="1.5" PointX="5.25" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MobilityAssistModel.HType" Width="1.5" PointX="6" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MobilityAssistModel.Request" Width="1.5" PointX="8.25" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MobilityAssistModel.Responce" Width="1.5" PointX="10.5" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MobilityAssistModel.Role" Width="1.5" PointX="3.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MobilityAssistModel.Street" Width="1.5" PointX="0.75" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MobilityAssistModel.sysdiagram" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MobilityAssistModel.User" Width="1.5" PointX="6" PointY="7.25" IsExpanded="true" />
+        <AssociationConnector Association="MobilityAssistModel.FK__Addresses__stree__2B3F6F97" ManuallyRouted="false" />
+        <AssociationConnector Association="MobilityAssistModel.FK__Buildings__addre__6C190EBB" ManuallyRouted="false" />
+        <AssociationConnector Association="MobilityAssistModel.FK__Requests__addres__66603565" ManuallyRouted="false" />
+        <AssociationConnector Association="MobilityAssistModel.FK__Requests__destin__693CA210" ManuallyRouted="false" />
+        <AssociationConnector Association="MobilityAssistModel.FK__Requests__help_i__6754599E" ManuallyRouted="false" />
+        <AssociationConnector Association="MobilityAssistModel.FK__Requests__user_i__656C112C" ManuallyRouted="false" />
+        <AssociationConnector Association="MobilityAssistModel.FK__Responces__req_i__68487DD7" ManuallyRouted="false" />
+        <AssociationConnector Association="MobilityAssistModel.FK__Responces__user___534D60F1" ManuallyRouted="false" />
+        <AssociationConnector Association="MobilityAssistModel.FK__Users__user_role__267ABA7A" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

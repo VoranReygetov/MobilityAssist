@@ -1,0 +1,634 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="MobilityAssistModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Addresses">
+          <Key>
+            <PropertyRef Name="address_id" />
+          </Key>
+          <Property Name="address_id" Type="int" Nullable="false" />
+          <Property Name="address_numb" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="street_id" Type="int" Nullable="false" />
+          <Property Name="is_adaptated" Type="bit" Nullable="false" />
+          <Property Name="address_coordx" Type="float" Nullable="false" />
+          <Property Name="address_coordy" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Buildings">
+          <Key>
+            <PropertyRef Name="building_id" />
+          </Key>
+          <Property Name="building_id" Type="int" Nullable="false" />
+          <Property Name="address_id" Type="int" Nullable="false" />
+          <Property Name="building_name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="building_desc" Type="text" />
+        </EntityType>
+        <EntityType Name="HTypes">
+          <Key>
+            <PropertyRef Name="help_id" />
+          </Key>
+          <Property Name="help_id" Type="int" Nullable="false" />
+          <Property Name="help_name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="help_desc" Type="text" />
+        </EntityType>
+        <EntityType Name="Requests">
+          <Key>
+            <PropertyRef Name="request_id" />
+          </Key>
+          <Property Name="request_id" Type="int" Nullable="false" />
+          <Property Name="user_id" Type="int" Nullable="false" />
+          <Property Name="address_id" Type="int" Nullable="false" />
+          <Property Name="destination_id" Type="int" />
+          <Property Name="help_id" Type="int" Nullable="false" />
+          <Property Name="req_status" Type="bit" Nullable="false" />
+          <Property Name="req_desc" Type="text" />
+          <Property Name="req_date" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Responces">
+          <Key>
+            <PropertyRef Name="res_id" />
+          </Key>
+          <Property Name="res_id" Type="int" Nullable="false" />
+          <Property Name="req_id" Type="int" Nullable="false" />
+          <Property Name="user_id" Type="int" Nullable="false" />
+          <Property Name="res_comm" Type="text" />
+          <Property Name="res_date" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Roles">
+          <Key>
+            <PropertyRef Name="role_id" />
+          </Key>
+          <Property Name="role_id" Type="int" Nullable="false" />
+          <Property Name="role_name" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Streets">
+          <Key>
+            <PropertyRef Name="street_id" />
+          </Key>
+          <Property Name="street_id" Type="int" Nullable="false" />
+          <Property Name="street_name" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="user_id" />
+          </Key>
+          <Property Name="user_id" Type="int" Nullable="false" />
+          <Property Name="password" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="user_role" Type="int" Nullable="false" />
+          <Property Name="first_name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="last_name" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK__Addresses__stree__2B3F6F97">
+          <End Role="Streets" Type="Self.Streets" Multiplicity="1" />
+          <End Role="Addresses" Type="Self.Addresses" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Streets">
+              <PropertyRef Name="street_id" />
+            </Principal>
+            <Dependent Role="Addresses">
+              <PropertyRef Name="street_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Buildings__addre__6C190EBB">
+          <End Role="Addresses" Type="Self.Addresses" Multiplicity="1" />
+          <End Role="Buildings" Type="Self.Buildings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Addresses">
+              <PropertyRef Name="address_id" />
+            </Principal>
+            <Dependent Role="Buildings">
+              <PropertyRef Name="address_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__addres__66603565">
+          <End Role="Addresses" Type="Self.Addresses" Multiplicity="1" />
+          <End Role="Requests" Type="Self.Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Addresses">
+              <PropertyRef Name="address_id" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="address_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__destin__693CA210">
+          <End Role="Addresses" Type="Self.Addresses" Multiplicity="0..1" />
+          <End Role="Requests" Type="Self.Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Addresses">
+              <PropertyRef Name="address_id" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="destination_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__help_i__6754599E">
+          <End Role="HTypes" Type="Self.HTypes" Multiplicity="1" />
+          <End Role="Requests" Type="Self.Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HTypes">
+              <PropertyRef Name="help_id" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="help_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__user_i__656C112C">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Requests" Type="Self.Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Responces__req_i__68487DD7">
+          <End Role="Requests" Type="Self.Requests" Multiplicity="1" />
+          <End Role="Responces" Type="Self.Responces" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Requests">
+              <PropertyRef Name="request_id" />
+            </Principal>
+            <Dependent Role="Responces">
+              <PropertyRef Name="req_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Responces__user___534D60F1">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Responces" Type="Self.Responces" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="Responces">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Users__user_role__267ABA7A">
+          <End Role="Roles" Type="Self.Roles" Multiplicity="1" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="role_id" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="user_role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MobilityAssistModelStoreContainer">
+          <EntitySet Name="Addresses" EntityType="Self.Addresses" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Buildings" EntityType="Self.Buildings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HTypes" EntityType="Self.HTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Requests" EntityType="Self.Requests" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Responces" EntityType="Self.Responces" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Streets" EntityType="Self.Streets" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Addresses__stree__2B3F6F97" Association="Self.FK__Addresses__stree__2B3F6F97">
+            <End Role="Streets" EntitySet="Streets" />
+            <End Role="Addresses" EntitySet="Addresses" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Buildings__addre__6C190EBB" Association="Self.FK__Buildings__addre__6C190EBB">
+            <End Role="Addresses" EntitySet="Addresses" />
+            <End Role="Buildings" EntitySet="Buildings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__addres__66603565" Association="Self.FK__Requests__addres__66603565">
+            <End Role="Addresses" EntitySet="Addresses" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__destin__693CA210" Association="Self.FK__Requests__destin__693CA210">
+            <End Role="Addresses" EntitySet="Addresses" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__help_i__6754599E" Association="Self.FK__Requests__help_i__6754599E">
+            <End Role="HTypes" EntitySet="HTypes" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__user_i__656C112C" Association="Self.FK__Requests__user_i__656C112C">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Responces__req_i__68487DD7" Association="Self.FK__Responces__req_i__68487DD7">
+            <End Role="Requests" EntitySet="Requests" />
+            <End Role="Responces" EntitySet="Responces" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Responces__user___534D60F1" Association="Self.FK__Responces__user___534D60F1">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Responces" EntitySet="Responces" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Users__user_role__267ABA7A" Association="Self.FK__Users__user_role__267ABA7A">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MobilityAssistModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Address">
+          <Key>
+            <PropertyRef Name="address_id" />
+          </Key>
+          <Property Name="address_id" Type="Int32" Nullable="false" />
+          <Property Name="address_numb" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="street_id" Type="Int32" Nullable="false" />
+          <Property Name="is_adaptated" Type="Boolean" Nullable="false" />
+          <Property Name="address_coordx" Type="Double" Nullable="false" />
+          <Property Name="address_coordy" Type="Double" Nullable="false" />
+          <NavigationProperty Name="Street" Relationship="Self.FK__Addresses__stree__2B3F6F97" FromRole="Addresses" ToRole="Streets" />
+          <NavigationProperty Name="Buildings" Relationship="Self.FK__Buildings__addre__6C190EBB" FromRole="Addresses" ToRole="Buildings" />
+          <NavigationProperty Name="Requests" Relationship="Self.FK__Requests__addres__66603565" FromRole="Addresses" ToRole="Requests" />
+          <NavigationProperty Name="Requests1" Relationship="Self.FK__Requests__destin__693CA210" FromRole="Addresses" ToRole="Requests" />
+        </EntityType>
+        <EntityType Name="Building">
+          <Key>
+            <PropertyRef Name="building_id" />
+          </Key>
+          <Property Name="building_id" Type="Int32" Nullable="false" />
+          <Property Name="address_id" Type="Int32" Nullable="false" />
+          <Property Name="building_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="building_desc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Address" Relationship="Self.FK__Buildings__addre__6C190EBB" FromRole="Buildings" ToRole="Addresses" />
+        </EntityType>
+        <EntityType Name="HType">
+          <Key>
+            <PropertyRef Name="help_id" />
+          </Key>
+          <Property Name="help_id" Type="Int32" Nullable="false" />
+          <Property Name="help_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="help_desc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Requests" Relationship="Self.FK__Requests__help_i__6754599E" FromRole="HTypes" ToRole="Requests" />
+        </EntityType>
+        <EntityType Name="Request">
+          <Key>
+            <PropertyRef Name="request_id" />
+          </Key>
+          <Property Name="request_id" Type="Int32" Nullable="false" />
+          <Property Name="user_id" Type="Int32" Nullable="false" />
+          <Property Name="address_id" Type="Int32" Nullable="false" />
+          <Property Name="destination_id" Type="Int32" />
+          <Property Name="help_id" Type="Int32" Nullable="false" />
+          <Property Name="req_status" Type="Boolean" Nullable="false" />
+          <Property Name="req_desc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="req_date" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Address" Relationship="Self.FK__Requests__addres__66603565" FromRole="Requests" ToRole="Addresses" />
+          <NavigationProperty Name="Address1" Relationship="Self.FK__Requests__destin__693CA210" FromRole="Requests" ToRole="Addresses" />
+          <NavigationProperty Name="HType" Relationship="Self.FK__Requests__help_i__6754599E" FromRole="Requests" ToRole="HTypes" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Requests__user_i__656C112C" FromRole="Requests" ToRole="Users" />
+          <NavigationProperty Name="Responces" Relationship="Self.FK__Responces__req_i__68487DD7" FromRole="Requests" ToRole="Responces" />
+        </EntityType>
+        <EntityType Name="Responce">
+          <Key>
+            <PropertyRef Name="res_id" />
+          </Key>
+          <Property Name="res_id" Type="Int32" Nullable="false" />
+          <Property Name="req_id" Type="Int32" Nullable="false" />
+          <Property Name="user_id" Type="Int32" Nullable="false" />
+          <Property Name="res_comm" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="res_date" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Request" Relationship="Self.FK__Responces__req_i__68487DD7" FromRole="Responces" ToRole="Requests" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Responces__user___534D60F1" FromRole="Responces" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="role_id" />
+          </Key>
+          <Property Name="role_id" Type="Int32" Nullable="false" />
+          <Property Name="role_name" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Users" Relationship="Self.FK__Users__user_role__267ABA7A" FromRole="Roles" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="Street">
+          <Key>
+            <PropertyRef Name="street_id" />
+          </Key>
+          <Property Name="street_id" Type="Int32" Nullable="false" />
+          <Property Name="street_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Addresses" Relationship="Self.FK__Addresses__stree__2B3F6F97" FromRole="Streets" ToRole="Addresses" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="user_id" />
+          </Key>
+          <Property Name="user_id" Type="Int32" Nullable="false" />
+          <Property Name="password" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="user_role" Type="Int32" Nullable="false" />
+          <Property Name="first_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="last_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Requests" Relationship="Self.FK__Requests__user_i__656C112C" FromRole="Users" ToRole="Requests" />
+          <NavigationProperty Name="Responces" Relationship="Self.FK__Responces__user___534D60F1" FromRole="Users" ToRole="Responces" />
+          <NavigationProperty Name="Role" Relationship="Self.FK__Users__user_role__267ABA7A" FromRole="Users" ToRole="Roles" />
+        </EntityType>
+        <Association Name="FK__Addresses__stree__2B3F6F97">
+          <End Role="Streets" Type="Self.Street" Multiplicity="1" />
+          <End Role="Addresses" Type="Self.Address" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Streets">
+              <PropertyRef Name="street_id" />
+            </Principal>
+            <Dependent Role="Addresses">
+              <PropertyRef Name="street_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Buildings__addre__6C190EBB">
+          <End Role="Addresses" Type="Self.Address" Multiplicity="1" />
+          <End Role="Buildings" Type="Self.Building" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Addresses">
+              <PropertyRef Name="address_id" />
+            </Principal>
+            <Dependent Role="Buildings">
+              <PropertyRef Name="address_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__addres__66603565">
+          <End Role="Addresses" Type="Self.Address" Multiplicity="1" />
+          <End Role="Requests" Type="Self.Request" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Addresses">
+              <PropertyRef Name="address_id" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="address_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__destin__693CA210">
+          <End Role="Addresses" Type="Self.Address" Multiplicity="0..1" />
+          <End Role="Requests" Type="Self.Request" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Addresses">
+              <PropertyRef Name="address_id" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="destination_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__help_i__6754599E">
+          <End Role="HTypes" Type="Self.HType" Multiplicity="1" />
+          <End Role="Requests" Type="Self.Request" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HTypes">
+              <PropertyRef Name="help_id" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="help_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Requests__user_i__656C112C">
+          <End Role="Users" Type="Self.User" Multiplicity="1" />
+          <End Role="Requests" Type="Self.Request" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="Requests">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Responces__req_i__68487DD7">
+          <End Role="Requests" Type="Self.Request" Multiplicity="1" />
+          <End Role="Responces" Type="Self.Responce" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Requests">
+              <PropertyRef Name="request_id" />
+            </Principal>
+            <Dependent Role="Responces">
+              <PropertyRef Name="req_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Responces__user___534D60F1">
+          <End Role="Users" Type="Self.User" Multiplicity="1" />
+          <End Role="Responces" Type="Self.Responce" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="Responces">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Users__user_role__267ABA7A">
+          <End Role="Roles" Type="Self.Role" Multiplicity="1" />
+          <End Role="Users" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="role_id" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="user_role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MobilityAssistEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Addresses" EntityType="Self.Address" />
+          <EntitySet Name="Buildings" EntityType="Self.Building" />
+          <EntitySet Name="HTypes" EntityType="Self.HType" />
+          <EntitySet Name="Requests" EntityType="Self.Request" />
+          <EntitySet Name="Responces" EntityType="Self.Responce" />
+          <EntitySet Name="Roles" EntityType="Self.Role" />
+          <EntitySet Name="Streets" EntityType="Self.Street" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <AssociationSet Name="FK__Addresses__stree__2B3F6F97" Association="Self.FK__Addresses__stree__2B3F6F97">
+            <End Role="Streets" EntitySet="Streets" />
+            <End Role="Addresses" EntitySet="Addresses" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Buildings__addre__6C190EBB" Association="Self.FK__Buildings__addre__6C190EBB">
+            <End Role="Addresses" EntitySet="Addresses" />
+            <End Role="Buildings" EntitySet="Buildings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__addres__66603565" Association="Self.FK__Requests__addres__66603565">
+            <End Role="Addresses" EntitySet="Addresses" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__destin__693CA210" Association="Self.FK__Requests__destin__693CA210">
+            <End Role="Addresses" EntitySet="Addresses" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__help_i__6754599E" Association="Self.FK__Requests__help_i__6754599E">
+            <End Role="HTypes" EntitySet="HTypes" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Requests__user_i__656C112C" Association="Self.FK__Requests__user_i__656C112C">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Requests" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Responces__req_i__68487DD7" Association="Self.FK__Responces__req_i__68487DD7">
+            <End Role="Requests" EntitySet="Requests" />
+            <End Role="Responces" EntitySet="Responces" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Responces__user___534D60F1" Association="Self.FK__Responces__user___534D60F1">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Responces" EntitySet="Responces" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Users__user_role__267ABA7A" Association="Self.FK__Users__user_role__267ABA7A">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MobilityAssistModelStoreContainer" CdmEntityContainer="MobilityAssistEntities">
+          <EntitySetMapping Name="Addresses">
+            <EntityTypeMapping TypeName="MobilityAssistModel.Address">
+              <MappingFragment StoreEntitySet="Addresses">
+                <ScalarProperty Name="address_id" ColumnName="address_id" />
+                <ScalarProperty Name="address_numb" ColumnName="address_numb" />
+                <ScalarProperty Name="street_id" ColumnName="street_id" />
+                <ScalarProperty Name="is_adaptated" ColumnName="is_adaptated" />
+                <ScalarProperty Name="address_coordx" ColumnName="address_coordx" />
+                <ScalarProperty Name="address_coordy" ColumnName="address_coordy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Buildings">
+            <EntityTypeMapping TypeName="MobilityAssistModel.Building">
+              <MappingFragment StoreEntitySet="Buildings">
+                <ScalarProperty Name="building_id" ColumnName="building_id" />
+                <ScalarProperty Name="address_id" ColumnName="address_id" />
+                <ScalarProperty Name="building_name" ColumnName="building_name" />
+                <ScalarProperty Name="building_desc" ColumnName="building_desc" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HTypes">
+            <EntityTypeMapping TypeName="MobilityAssistModel.HType">
+              <MappingFragment StoreEntitySet="HTypes">
+                <ScalarProperty Name="help_id" ColumnName="help_id" />
+                <ScalarProperty Name="help_name" ColumnName="help_name" />
+                <ScalarProperty Name="help_desc" ColumnName="help_desc" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Requests">
+            <EntityTypeMapping TypeName="MobilityAssistModel.Request">
+              <MappingFragment StoreEntitySet="Requests">
+                <ScalarProperty Name="request_id" ColumnName="request_id" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="address_id" ColumnName="address_id" />
+                <ScalarProperty Name="destination_id" ColumnName="destination_id" />
+                <ScalarProperty Name="help_id" ColumnName="help_id" />
+                <ScalarProperty Name="req_status" ColumnName="req_status" />
+                <ScalarProperty Name="req_desc" ColumnName="req_desc" />
+                <ScalarProperty Name="req_date" ColumnName="req_date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Responces">
+            <EntityTypeMapping TypeName="MobilityAssistModel.Responce">
+              <MappingFragment StoreEntitySet="Responces">
+                <ScalarProperty Name="res_id" ColumnName="res_id" />
+                <ScalarProperty Name="req_id" ColumnName="req_id" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="res_comm" ColumnName="res_comm" />
+                <ScalarProperty Name="res_date" ColumnName="res_date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Roles">
+            <EntityTypeMapping TypeName="MobilityAssistModel.Role">
+              <MappingFragment StoreEntitySet="Roles">
+                <ScalarProperty Name="role_id" ColumnName="role_id" />
+                <ScalarProperty Name="role_name" ColumnName="role_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Streets">
+            <EntityTypeMapping TypeName="MobilityAssistModel.Street">
+              <MappingFragment StoreEntitySet="Streets">
+                <ScalarProperty Name="street_id" ColumnName="street_id" />
+                <ScalarProperty Name="street_name" ColumnName="street_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="MobilityAssistModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="MobilityAssistModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="user_role" ColumnName="user_role" />
+                <ScalarProperty Name="first_name" ColumnName="first_name" />
+                <ScalarProperty Name="last_name" ColumnName="last_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
