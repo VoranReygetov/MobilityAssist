@@ -17,14 +17,14 @@ namespace MobilityAssist.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "What's this application.";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "You can contact me here.";
 
             return View();
         }
@@ -46,7 +46,8 @@ namespace MobilityAssist.Controllers
                     {
                         Session["UserID"] = obj.user_id.ToString();
                         Session["FirstName"] = obj.first_name.ToString();
-                        return RedirectToAction("UserDashBoard");
+                        Session["Role"] = obj.user_role.ToString();
+                        return RedirectToAction("UserDashBoard", "App");
                     }
                 }
                 ViewBag.Message = "Credentials is not valid";
@@ -54,17 +55,6 @@ namespace MobilityAssist.Controllers
             return View(objUser);
         }
 
-        public ActionResult UserDashBoard()
-        {
-            if (Session["UserID"] != null)
-            {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("Login");
-            }
-        }
         public List<SelectListItem> GetRoleItems()
         {
             List<SelectListItem> items = new List<SelectListItem>();
@@ -100,7 +90,8 @@ namespace MobilityAssist.Controllers
                         db.SaveChanges();
                         Session["UserID"] = objUser.user_id.ToString();
                         Session["FirstName"] = objUser.first_name.ToString();
-                        return RedirectToAction("UserDashBoard");
+                        Session["Role"] = objUser.user_role.ToString();
+                        return RedirectToAction("UserDashBoard", "App");
                     }
                     catch (Exception)
                     {
