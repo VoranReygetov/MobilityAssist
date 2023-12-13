@@ -4,7 +4,7 @@
     ViewBag.Title = "Login";
 }
 
-<h2>Login</h2>
+<h2>Увійти</h2>
 
 @using (Html.BeginForm("Login", "Home", FormMethod.Post))
 {
@@ -23,18 +23,18 @@
 
         <table>
             <tr>
-                <td>@Html.LabelFor(a => a.email)</td>
+                <td>@Html.LabelFor(a => a.email, "Пошта")</td>
                 <td>@Html.TextBoxFor(a => a.email)</td>
                 <td>@Html.ValidationMessageFor(a => a.email)</td>
             </tr>
             <tr>
-                <td>@Html.LabelFor(a => a.password) </td>
+                <td>@Html.LabelFor(a => a.password, "Пароль") </td>
                 <td>@Html.PasswordFor(a => a.password)</td>
                 <td>@Html.ValidationMessageFor(a => a.password)</td>
             </tr>
             <tr>
                 <td></td>
-                <td><input type="submit" value="Login" /></td>
+                <td><input type="submit" value="Увійти" /></td>
                 <td></td>
             </tr>
         </table>

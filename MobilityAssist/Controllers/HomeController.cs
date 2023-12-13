@@ -17,7 +17,7 @@ namespace MobilityAssist.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "What's this application.";
+            ViewBag.Message = "Про що цей застосунок";
 
             return View();
         }
@@ -30,6 +30,7 @@ namespace MobilityAssist.Controllers
         }
         public ActionResult Login()
         {
+            
             return View();
         }
 
@@ -44,6 +45,7 @@ namespace MobilityAssist.Controllers
                     var obj = db.Users.Where(a => a.email.Equals(objUser.email) && a.password.Equals(objUser.password)).FirstOrDefault();
                     if (obj != null)
                     {
+                        //FormsAuthentication.SetAuthCookie(obj.email, false);
                         Session["UserID"] = obj.user_id.ToString();
                         Session["FirstName"] = obj.first_name.ToString();
                         Session["Role"] = obj.user_role.ToString();

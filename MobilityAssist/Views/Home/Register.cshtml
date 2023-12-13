@@ -5,7 +5,8 @@
     ViewBag.Title = "Register";
 }
 
-<h2>Register</h2>
+<h2>Реєстрація</h2>
+<br/>
 
 
 @using (Html.BeginForm("Register", "Home", FormMethod.Post)) 
@@ -13,7 +14,7 @@
     @Html.AntiForgeryToken()
     
 <div class="form-horizontal">
-    <h4>User</h4>
+    <h4>Користувача</h4>
     <hr />
 
     @if (ViewBag.Message != null)
@@ -26,7 +27,7 @@
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
     <div class="form-group">
-        @Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.email, "Пошта", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
@@ -34,7 +35,7 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.password, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.password,"Пароль", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.PasswordFor(model => model.password, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
@@ -42,7 +43,7 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.first_name, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.first_name,"Ім'я", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.first_name, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.first_name, "", new { @class = "text-danger" })
@@ -50,7 +51,7 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.last_name, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.last_name, "Прізвище", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.last_name, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.last_name, "", new { @class = "text-danger" })
@@ -58,23 +59,23 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.user_role, "Role", htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.user_role, "Роль", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">            
             @Html.DropDownList("RoleType", null, htmlAttributes: new { @class = "control-label col-md-2" })
             @Html.ValidationMessageFor(model => model.user_role, "", new { @class = "text-danger" })
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group"; style="margin-top:12px">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Register" class="btn btn-default" />
+            <button type="submit" class="btn btn-outline-primary">Заруєструватись</button>
         </div>
     </div>
 </div>
 }
 
 <div>
-    @Html.ActionLink("Back to Log In", "Login")
+    @Html.ActionLink("Повернутись до Логіну", "Login")
 </div>
 
 @section Scripts {
