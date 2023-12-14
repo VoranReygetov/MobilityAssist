@@ -53,7 +53,7 @@ namespace MobilityAssist.Controllers
             {
                 var extrareq = db.GetExtra(Convert.ToInt16(Session["UserID"]));
 
-                if (extrareq != null)
+                if (extrareq.Any())
                 {
                     ViewData.Add("extrdata", extrareq.ToList());
                 }
@@ -83,7 +83,7 @@ namespace MobilityAssist.Controllers
                         request.req_date = DateTime.Now;
                         db.Requests.Add(request);
                         db.SaveChanges();
-                        return RedirectToAction("UserDashBoard", "App");
+                        return RedirectToAction("RequestListDashBoard", "App");
                     }
                     catch (Exception ex)
                     {
@@ -98,6 +98,7 @@ namespace MobilityAssist.Controllers
         {
             if (Session["UserID"] == null)
                 return RedirectToAction("Login", "Home");
+
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
                 var requestquery = db.GetRequests(Convert.ToInt16(Session["UserID"]));
@@ -115,6 +116,7 @@ namespace MobilityAssist.Controllers
                 return RedirectToAction("Login", "Home");
             if (request_id == null)
                 return RedirectToAction("RequestListDashBoard", "App");
+
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {               
                 var request = db.GetRequests(Convert.ToInt16(Session["UserID"])).Where(req => req.request_id == request_id).First();
@@ -128,6 +130,7 @@ namespace MobilityAssist.Controllers
                 return RedirectToAction("Login", "Home");
             if (request_id == null)
                 return RedirectToAction("RequestListDashBoard", "App");
+
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
                 var request = (from req in db.Requests where req.request_id == request_id select req).First();

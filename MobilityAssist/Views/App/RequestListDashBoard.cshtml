@@ -2,7 +2,7 @@
     ViewBag.Title = "RequestListDashBoard";
 }
 
-<h2>RequestListDashBoard</h2>
+<h2>Ваші запити</h2>
 
 <table class="table">
     <thead class="thead-dark">
@@ -39,12 +39,7 @@
                 </td>
                 <td>
                     @{
-                        string formattedDifference = string.Format("{0}:{1}, {2}/{3}/{4}",
-                            req.req_date.Hour,
-                            req.req_date.Minute,
-                            req.req_date.Day,
-                            req.req_date.Month,
-                            req.req_date.Year);
+                        string formattedDifference = req.req_date.ToString("HH:mm, dd/MM/yyyy");
                     }
 
                     @formattedDifference
