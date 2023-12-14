@@ -1,0 +1,69 @@
+﻿
+@{
+    ViewBag.Title = "UserDashboard";
+    Layout = "~/Views/App/_DashBoardLayout.cshtml";
+}
+
+<div>
+    <table style="display: block; margin: 10px">
+        <tbody>
+            <tr>
+                <td><a class="btn btn-primary" href="@Url.Action("RequestDashBoard", "App")" role="button">Кому зараз допомогти</a></td>
+            </tr>
+            <tr>
+                <td><a class="btn btn-primary" href="#" role="button">Побудувати маршрут</a></td>
+            </tr>
+        </tbody>
+    </table>
+    @{
+        if (@ViewData["extrdata"] != null)
+        {
+
+            <p style="font-weight: bold; font-size: 24px">В вас є екстрений виклик. Негайно відреагуйте на нього!</p>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Ім'я</th>
+                        <th scope="col">Вулиця</th>
+                        <th scope="col">Необхідна допомога</th>
+                        <th scope="col">Пройшло часу</th>
+                        <th scope="col">Прийняти</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var req in @ViewData["extrdata"] as IEnumerable
+                    <MobilityAssist.Models.GetExtra_Result>
+                        )
+                    {
+                        <tr>
+                            <td>
+                                @req.first_name
+                            </td>
+                            <td>
+                                @req.street_name, @req.address_numb
+                            </td>
+                            <td style="font-weight:bolder; color:darkred">
+                                @req.help_name
+                            </td>
+                            <td>
+                                @{
+                                    TimeSpan timeDifference = DateTime.Now - req.req_date;
+                                    string formattedDifference = string.Format("{0} годин, {1} хвилин, {2} секунд",                                                            
+                                                            timeDifference.Hours,
+                                                            timeDifference.Minutes,
+                                                            timeDifference.Seconds);
+                                }
+
+                                @formattedDifference
+
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger">Відповісти</button>
+                            </td>
+                        </tr>
+                    }
+                <tbody>
+            </table>
+        }
+    }
+</div>

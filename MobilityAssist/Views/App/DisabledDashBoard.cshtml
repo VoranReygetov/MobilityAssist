@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "DisabledDashBoard";
+    Layout = "~/Views/App/_DashBoardLayout.cshtml";
+}
+
+<div>
+    <table style="display:block">
+        <tbody style="margin: 10px">
+            <tr>
+                <td><a class="btn btn-primary" href="@Url.Action("RequestDashBoard", "App")" role="button">Зробити запит допомоги</a></td>
+            </tr>
+            <tr>
+                <td><a class="btn btn-primary" href="#" role="button">Побудувати маршрут</a></td>
+            </tr>
+            <tr>
+                <td><a class="btn btn-primary" href="@Url.Action("RequestListDashBoard", "App")" role="button">Переглянути запити</a></td>
+            </tr>
+            <tr>
+                <td><a class="btn btn-primary" href="#" role="button">Екстрений виклик допомоги</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+

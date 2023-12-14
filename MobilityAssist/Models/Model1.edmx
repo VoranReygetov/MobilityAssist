@@ -25,6 +25,14 @@
           <Property Name="building_name" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="building_desc" Type="text" />
         </EntityType>
+        <EntityType Name="ExtraMembs">
+          <Key>
+            <PropertyRef Name="contact_id" />
+            <PropertyRef Name="memb_id" />
+          </Key>
+          <Property Name="contact_id" Type="int" Nullable="false" />
+          <Property Name="memb_id" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="HTypes">
           <Key>
             <PropertyRef Name="help_id" />
@@ -115,6 +123,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__ExtraMemb__conta__1CBC4616">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="ExtraMembs" Type="Self.ExtraMembs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="ExtraMembs">
+              <PropertyRef Name="contact_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ExtraMemb__memb___1DB06A4F">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="ExtraMembs" Type="Self.ExtraMembs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="ExtraMembs">
+              <PropertyRef Name="memb_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Requests__addres__151B244E">
           <End Role="Addresses" Type="Self.Addresses" Multiplicity="1" />
           <End Role="Requests" Type="Self.Requests" Multiplicity="*" />
@@ -199,9 +231,51 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
+        <Function Name="GetAddresses" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="GetExtra" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ExtraMembID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetRequests" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetSingleAddress" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AddressID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="version" Type="int" Mode="In" />
+          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_creatediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="version" Type="int" Mode="In" />
+          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_helpdiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="MobilityAssistModelStoreContainer">
           <EntitySet Name="Addresses" EntityType="Self.Addresses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Buildings" EntityType="Self.Buildings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ExtraMembs" EntityType="Self.ExtraMembs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HTypes" EntityType="Self.HTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Requests" EntityType="Self.Requests" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Responces" EntityType="Self.Responces" Schema="dbo" store:Type="Tables" />
@@ -216,6 +290,14 @@
           <AssociationSet Name="FK__Buildings__addre__17F790F9" Association="Self.FK__Buildings__addre__17F790F9">
             <End Role="Addresses" EntitySet="Addresses" />
             <End Role="Buildings" EntitySet="Buildings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ExtraMemb__conta__1CBC4616" Association="Self.FK__ExtraMemb__conta__1CBC4616">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="ExtraMembs" EntitySet="ExtraMembs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ExtraMemb__memb___1DB06A4F" Association="Self.FK__ExtraMemb__memb___1DB06A4F">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="ExtraMembs" EntitySet="ExtraMembs" />
           </AssociationSet>
           <AssociationSet Name="FK__Requests__addres__151B244E" Association="Self.FK__Requests__addres__151B244E">
             <End Role="Addresses" EntitySet="Addresses" />
@@ -353,6 +435,8 @@
           <NavigationProperty Name="Responces" Relationship="Self.FK__Responces__user___534D60F1" FromRole="Users" ToRole="Responces" />
           <NavigationProperty Name="Role" Relationship="Self.FK__Users__user_role__267ABA7A" FromRole="Users" ToRole="Roles" />
           <Property Name="email" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Users1" Relationship="MobilityAssistModel.ExtraMembs" FromRole="User" ToRole="User1" />
+          <NavigationProperty Name="Users" Relationship="MobilityAssistModel.ExtraMembs" FromRole="User1" ToRole="User" />
         </EntityType>
         <Association Name="FK__Addresses__stree__2B3F6F97">
           <End Role="Streets" Type="Self.Street" Multiplicity="1" />
@@ -508,7 +592,102 @@
             <End Role="Roles" EntitySet="Roles" />
             <End Role="Users" EntitySet="Users" />
           </AssociationSet>
+          <AssociationSet Name="ExtraMembs" Association="MobilityAssistModel.ExtraMembs">
+            <End Role="User" EntitySet="Users" />
+            <End Role="User1" EntitySet="Users" />
+          </AssociationSet>
+          <FunctionImport Name="GetAddresses" ReturnType="Collection(MobilityAssistModel.GetAddresses_Result)" />
+          <FunctionImport Name="GetExtra" ReturnType="Collection(MobilityAssistModel.GetExtra_Result)">
+          <Parameter Name="ExtraMembID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetSingleAddress" ReturnType="Collection(MobilityAssistModel.GetSingleAddress_Result)">
+          <Parameter Name="AddressID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_alterdiagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="version" Mode="In" Type="Int32" />
+            <Parameter Name="definition" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="sp_creatediagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="version" Mode="In" Type="Int32" />
+            <Parameter Name="definition" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="sp_dropdiagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(MobilityAssistModel.sp_helpdiagramdefinition_Result)">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(MobilityAssistModel.sp_helpdiagrams_Result)">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_renamediagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="new_diagramname" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_upgraddiagrams" />
+          <FunctionImport Name="GetRequests" ReturnType="Collection(MobilityAssistModel.GetRequests_Result)">
+          <Parameter Name="UserID" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
+        <Association Name="ExtraMembs">
+          <End Type="MobilityAssistModel.User" Role="User" Multiplicity="*" />
+          <End Type="MobilityAssistModel.User" Role="User1" Multiplicity="*" />
+        </Association>
+        <ComplexType Name="GetAddresses_Result">
+          <Property Type="Int32" Name="street_id" Nullable="false" />
+          <Property Type="Int32" Name="address_id" Nullable="false" />
+          <Property Type="Double" Name="address_coordx" Nullable="false" />
+          <Property Type="Double" Name="address_coordy" Nullable="false" />
+          <Property Type="String" Name="street" Nullable="false" MaxLength="57" />
+        </ComplexType>
+        <ComplexType Name="GetExtra_Result">
+          <Property Type="Int32" Name="request_id" Nullable="false" />
+          <Property Type="String" Name="first_name" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="street_name" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="address_numb" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="help_name" Nullable="false" MaxLength="50" />
+          <Property Type="Double" Name="address_coordx" Nullable="false" />
+          <Property Type="Double" Name="address_coordy" Nullable="false" />
+          <Property Type="DateTime" Name="req_date" Nullable="false" Precision="23" />
+        </ComplexType>
+        <ComplexType Name="GetSingleAddress_Result">
+          <Property Type="String" Name="street_name" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="address_numb" Nullable="false" MaxLength="5" />
+          <Property Type="Int32" Name="street_id" Nullable="false" />
+          <Property Type="Int32" Name="address_id" Nullable="false" />
+          <Property Type="Double" Name="address_coordx" Nullable="false" />
+          <Property Type="Double" Name="address_coordy" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="sp_helpdiagramdefinition_Result">
+          <Property Type="Int32" Name="version" Nullable="true" />
+          <Property Type="Binary" Name="definition" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_helpdiagrams_Result">
+          <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
+          <Property Type="Int32" Name="OwnerID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="GetRequests_Result">
+          <Property Type="Int32" Name="request_id" Nullable="false" />
+          <Property Type="String" Name="help_name" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="req_date" Nullable="false" Precision="23" />
+          <Property Type="Double" Name="distance" Nullable="true" />
+          <Property Type="Boolean" Name="req_status" Nullable="false" />
+          <Property Type="String" Name="start_street_name" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="start_address_numb" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="destination_street_name" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="destination_address_numb" Nullable="true" MaxLength="5" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -610,6 +789,90 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <AssociationSetMapping Name="ExtraMembs" TypeName="MobilityAssistModel.ExtraMembs" StoreEntitySet="ExtraMembs">
+            <EndProperty Name="User1">
+              <ScalarProperty Name="user_id" ColumnName="memb_id" />
+            </EndProperty>
+            <EndProperty Name="User">
+              <ScalarProperty Name="user_id" ColumnName="contact_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="GetAddresses" FunctionName="MobilityAssistModel.Store.GetAddresses">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MobilityAssistModel.GetAddresses_Result">
+                <ScalarProperty Name="street_id" ColumnName="street_id" />
+                <ScalarProperty Name="address_id" ColumnName="address_id" />
+                <ScalarProperty Name="address_coordx" ColumnName="address_coordx" />
+                <ScalarProperty Name="address_coordy" ColumnName="address_coordy" />
+                <ScalarProperty Name="street" ColumnName="street" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetExtra" FunctionName="MobilityAssistModel.Store.GetExtra">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MobilityAssistModel.GetExtra_Result">
+                <ScalarProperty Name="request_id" ColumnName="request_id" />
+                <ScalarProperty Name="first_name" ColumnName="first_name" />
+                <ScalarProperty Name="street_name" ColumnName="street_name" />
+                <ScalarProperty Name="address_numb" ColumnName="address_numb" />
+                <ScalarProperty Name="help_name" ColumnName="help_name" />
+                <ScalarProperty Name="address_coordx" ColumnName="address_coordx" />
+                <ScalarProperty Name="address_coordy" ColumnName="address_coordy" />
+                <ScalarProperty Name="req_date" ColumnName="req_date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetSingleAddress" FunctionName="MobilityAssistModel.Store.GetSingleAddress">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MobilityAssistModel.GetSingleAddress_Result">
+                <ScalarProperty Name="street_name" ColumnName="street_name" />
+                <ScalarProperty Name="address_numb" ColumnName="address_numb" />
+                <ScalarProperty Name="street_id" ColumnName="street_id" />
+                <ScalarProperty Name="address_id" ColumnName="address_id" />
+                <ScalarProperty Name="address_coordx" ColumnName="address_coordx" />
+                <ScalarProperty Name="address_coordy" ColumnName="address_coordy" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="MobilityAssistModel.Store.sp_alterdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="MobilityAssistModel.Store.sp_creatediagram" />
+          <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="MobilityAssistModel.Store.sp_dropdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="MobilityAssistModel.Store.sp_helpdiagramdefinition">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MobilityAssistModel.sp_helpdiagramdefinition_Result">
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_helpdiagrams" FunctionName="MobilityAssistModel.Store.sp_helpdiagrams">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MobilityAssistModel.sp_helpdiagrams_Result">
+                <ScalarProperty Name="Database" ColumnName="Database" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="OwnerID" ColumnName="OwnerID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="MobilityAssistModel.Store.sp_renamediagram" />
+          <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="MobilityAssistModel.Store.sp_upgraddiagrams" />
+          <FunctionImportMapping FunctionImportName="GetRequests" FunctionName="MobilityAssistModel.Store.GetRequests">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MobilityAssistModel.GetRequests_Result">
+                <ScalarProperty Name="request_id" ColumnName="request_id" />
+                <ScalarProperty Name="help_name" ColumnName="help_name" />
+                <ScalarProperty Name="req_date" ColumnName="req_date" />
+                <ScalarProperty Name="distance" ColumnName="distance" />
+                <ScalarProperty Name="req_status" ColumnName="req_status" />
+                <ScalarProperty Name="start_street_name" ColumnName="start_street_name" />
+                <ScalarProperty Name="start_address_numb" ColumnName="start_address_numb" />
+                <ScalarProperty Name="destination_street_name" ColumnName="destination_street_name" />
+                <ScalarProperty Name="destination_address_numb" ColumnName="destination_address_numb" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
