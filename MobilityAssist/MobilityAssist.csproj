@@ -273,6 +273,8 @@
     <Content Include="Views\App\RequestDashBoard.cshtml" />
     <Content Include="Views\App\RequestListDashBoard.cshtml" />
     <Content Include="Views\App\DeleteRequest.cshtml" />
+    <Content Include="Views\App\ExtraDashBoard.cshtml" />
+    <Content Include="Views\App\MakeExtraRequests.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

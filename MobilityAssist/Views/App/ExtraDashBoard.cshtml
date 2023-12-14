@@ -1,0 +1,69 @@
+﻿@model MobilityAssist.Models.User
+@{
+    ViewBag.Title = "ExtraDashBoard";
+}
+
+<h2>Екстра виклик допомоги</h2>
+<div>
+    <div>
+
+        @if (@ViewData["extrusers"] != null)
+        {
+
+            <p style="font-weight: bold; font-size: 24px">Ваші екстрені корстувачі</p>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Ім'я</th>
+                        <th scope="col">Пошта</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var req in @ViewData["extrusers"] as IEnumerable
+                    <MobilityAssist.Models.User>)
+                    {
+                        <tr>
+                            <td>
+                                @req.first_name @req.last_name
+                            </td>
+                            <td>
+                                @req.email
+                            </td>
+                            <td>
+                                @using (Html.BeginForm("DeleteExtraUser", "App", new { extra_id = req.user_id }, FormMethod.Post))
+                                {
+                                    <button type="submit" class="btn btn-danger">Видалити</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                <tbody>
+            </table>
+        }
+    </div>
+    <a type="button" href="@Url.Action("MakeExtraRequests", "App")" class="btn btn-danger btn-lg" style="margin:12px">Зробити екстрений виклик</a>
+    <div>
+        <h4>Додати екстреного користувача</h4>
+
+        @if (TempData.ContainsKey("Alert"))
+        {
+            <p style="border: 1px solid red; padding: 5px; display: inline-block;">
+                @TempData["Alert"].ToString()
+            </p>
+        }
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @using (Html.BeginForm("AddExtraUser", "App", FormMethod.Post))
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.email, "Пошта користувача", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(m => m.email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <button type="submit" class="btn btn-outline-primary" style="margin:12px">Додати</button>
+        }
+    </div>
+    <a type="button" href="@Url.Action("RequestListDashBoard", "App")" class="btn btn-light" style="margin:12px; margin-left:0px">Повернутись</a>
+</div>
