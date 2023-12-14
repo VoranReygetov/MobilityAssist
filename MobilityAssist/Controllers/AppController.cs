@@ -5,25 +5,25 @@ using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace MobilityAssist.Controllers
 {
-    //[Authorize]
     public class AppController : Controller
     {
         // GET: App
-        Random rnd = new Random();        
+        Random rnd = new Random();
         public ActionResult UserDashBoard()
         {
             if (Session["UserID"] == null)
-                return RedirectToAction("Login", "Home");            
+                return RedirectToAction("Login", "Home");
 
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
                 if (Session["Role"].Equals(db.Roles.First(role => role.role_name == "disabled").role_id.ToString())) //check for role
                     return RedirectToAction("DisabledDashBoard");
                 return RedirectToAction("HelperDashBoard");
-            }            
+            }
         }
         public string Greeting()
         {
@@ -60,44 +60,18 @@ namespace MobilityAssist.Controllers
             }
             return View();
         }
-        public List<SelectListItem> GetAddressItems()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
-            {
-                var addresses = db.GetAddresses();
-                foreach (GetAddresses_Result address in addresses)
-                {
-                    items.Add(new SelectListItem { Text = $"{address.street_name}, {address.address_numb}", Value = address.address_id.ToString() });
-                }
-            }
-            return items;
-        }
-        public List<SelectListItem> GetHelpItems()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
 
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
-            {
-                foreach (HType help in db.HTypes)
-                {
-                    items.Add(new SelectListItem { Text = help.help_name, Value = help.help_id.ToString() });
-                }
-            }
-            return items;
-        }
         [HttpGet]
         public ActionResult RequestDashBoard()
         {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Login", "Home");
             Request request = new Request();
-            ViewBag.AddressType = GetAddressItems();
-            ViewBag.HelpType = GetHelpItems();
             return View(request);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult RequestDashBoard(Request request, string HelpType, string AddressType, string Destinationype)
+        public ActionResult RequestDashBoard(Request request)
         {
             if (ModelState.IsValid)
             {
@@ -106,9 +80,6 @@ namespace MobilityAssist.Controllers
                     try
                     {
                         request.User = db.Users.Find(Convert.ToInt16(Session["UserID"]));
-                        request.Address = db.Addresses.Find(int.Parse(AddressType));
-                        request.Address1 = db.Addresses.Find(int.Parse(AddressType));
-                        request.HType = db.HTypes.Find(int.Parse(HelpType));
                         request.req_date = DateTime.Now;
                         db.Requests.Add(request);
                         db.SaveChanges();
@@ -116,15 +87,61 @@ namespace MobilityAssist.Controllers
                     }
                     catch (Exception ex)
                     {
-                        ViewBag.Message = "Ой, щось пішло не так!\n"+ ex;
+                        ViewBag.Message = "Ой, щось пішло не так!\t" + ex;
                     }
                 }
 
             }
-
-            ViewBag.AddressType = GetAddressItems();
-            ViewBag.HelpType = GetHelpItems();
             return View(request);
+        }
+        public ActionResult RequestListDashBoard()
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Login", "Home");
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                var requestquery = db.GetRequests(Convert.ToInt16(Session["UserID"]));
+                if (requestquery != null)
+                {
+                    ViewData.Add("requestquery", requestquery.ToList());
+                }
+            }
+            return View();
+        }
+        [HttpGet]
+        public ActionResult DeleteRequest(int? request_id)
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Login", "Home");
+            if (request_id == null)
+                return RedirectToAction("RequestListDashBoard", "App");
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {               
+                var request = db.GetRequests(Convert.ToInt16(Session["UserID"])).Where(req => req.request_id == request_id).First();
+                return View(request);
+            }
+        }
+        [HttpPost]
+        public ActionResult DeleteRequest(int? request_id, FormCollection collection)
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Login", "Home");
+            if (request_id == null)
+                return RedirectToAction("RequestListDashBoard", "App");
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                var request = (from req in db.Requests where req.request_id == request_id select req).First();
+                try
+                {
+                    db.Requests.Remove(request);
+                    db.SaveChanges();
+                    return RedirectToAction("RequestListDashBoard");
+                }
+                catch (Exception)
+                {
+                    return View(request);
+                }
+            }
         }
     }
 }

@@ -35,6 +35,10 @@
         @RenderBody()
         <hr />
         <footer>
+            @if (Session["UserID"] != null)
+            {
+                <a type="button" href="@Url.Action("LogOut", "Home")" class="btn btn-secondary">Log Out</a>
+            }
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>

@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "RequestListDashBoard";
+}
+
+<h2>RequestListDashBoard</h2>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Початок</th>
+            <th scope="col">Призначення</th>
+            <th scope="col">Необхідна допомога</th>
+            <th scope="col">Дата запиту</th>
+            <th scope="col">Відстань</th>
+            <th scope="col">Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var req in @ViewData["requestquery"] as IEnumerable
+        <MobilityAssist.Models.GetRequests_Result>
+            )
+        {
+            <tr>
+                <td>
+                    @req.request_id
+                </td>
+                <td>
+                    @req.start_street_name, @req.start_address_numb
+                </td>
+                <td>
+                    @if (@req.destination_street_name != null && @req.destination_address_numb != null) {
+                        <p>@req.destination_street_name, @req.destination_address_numb</p>
+                    }
+                        
+                    </td>
+                <td style="font-weight:bolder">
+                    @req.help_name
+                </td>
+                <td>
+                    @{
+                        string formattedDifference = string.Format("{0}:{1}, {2}/{3}/{4}",
+                            req.req_date.Hour,
+                            req.req_date.Minute,
+                            req.req_date.Day,
+                            req.req_date.Month,
+                            req.req_date.Year);
+                    }
+
+                    @formattedDifference
+
+                </td>
+                <td>
+                    @if (req.distance != null)
+                    {
+                        <p>@req.distance km</p>
+                    }
+                </td>
+                <td>
+                    @if (req.req_status == false)
+                    {
+                        <p style="font-weight:bold; color:darkred">Відкритий</p>
+                    }
+                    else
+                    {
+                        <p style="font-weight:bold; color:darkred">Відповіли</p>
+                    }
+
+                </td>
+                <td>
+                    <a href="@Url.Action("DeleteRequest", "App", new { request_id = req.request_id })" class="btn btn-danger">Завершити</a>
+                </td>
+            </tr>
+        }
+    <tbody>
+</table>
+<a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light">Повернутись</a>

@@ -236,6 +236,9 @@
         <Function Name="GetExtra" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ExtraMembID" Type="int" Mode="In" />
         </Function>
+        <Function Name="GetRequests" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+        </Function>
         <Function Name="GetSingleAddress" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="AddressID" Type="int" Mode="In" />
         </Function>
@@ -630,18 +633,20 @@
             <Parameter Name="new_diagramname" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
+          <FunctionImport Name="GetRequests" ReturnType="Collection(MobilityAssistModel.GetRequests_Result)">
+          <Parameter Name="UserID" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <Association Name="ExtraMembs">
           <End Type="MobilityAssistModel.User" Role="User" Multiplicity="*" />
           <End Type="MobilityAssistModel.User" Role="User1" Multiplicity="*" />
         </Association>
         <ComplexType Name="GetAddresses_Result">
-          <Property Type="String" Name="street_name" Nullable="false" MaxLength="50" />
-          <Property Type="String" Name="address_numb" Nullable="false" MaxLength="5" />
           <Property Type="Int32" Name="street_id" Nullable="false" />
           <Property Type="Int32" Name="address_id" Nullable="false" />
           <Property Type="Double" Name="address_coordx" Nullable="false" />
           <Property Type="Double" Name="address_coordy" Nullable="false" />
+          <Property Type="String" Name="street" Nullable="false" MaxLength="57" />
         </ComplexType>
         <ComplexType Name="GetExtra_Result">
           <Property Type="Int32" Name="request_id" Nullable="false" />
@@ -671,6 +676,17 @@
           <Property Type="Int32" Name="ID" Nullable="false" />
           <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
           <Property Type="Int32" Name="OwnerID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="GetRequests_Result">
+          <Property Type="Int32" Name="request_id" Nullable="false" />
+          <Property Type="String" Name="help_name" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="req_date" Nullable="false" Precision="23" />
+          <Property Type="Double" Name="distance" Nullable="true" />
+          <Property Type="Boolean" Name="req_status" Nullable="false" />
+          <Property Type="String" Name="start_street_name" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="start_address_numb" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="destination_street_name" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="destination_address_numb" Nullable="true" MaxLength="5" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -784,12 +800,11 @@
           <FunctionImportMapping FunctionImportName="GetAddresses" FunctionName="MobilityAssistModel.Store.GetAddresses">
             <ResultMapping>
               <ComplexTypeMapping TypeName="MobilityAssistModel.GetAddresses_Result">
-                <ScalarProperty Name="street_name" ColumnName="street_name" />
-                <ScalarProperty Name="address_numb" ColumnName="address_numb" />
                 <ScalarProperty Name="street_id" ColumnName="street_id" />
                 <ScalarProperty Name="address_id" ColumnName="address_id" />
                 <ScalarProperty Name="address_coordx" ColumnName="address_coordx" />
                 <ScalarProperty Name="address_coordy" ColumnName="address_coordy" />
+                <ScalarProperty Name="street" ColumnName="street" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -843,6 +858,21 @@
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="MobilityAssistModel.Store.sp_renamediagram" />
           <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="MobilityAssistModel.Store.sp_upgraddiagrams" />
+          <FunctionImportMapping FunctionImportName="GetRequests" FunctionName="MobilityAssistModel.Store.GetRequests">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MobilityAssistModel.GetRequests_Result">
+                <ScalarProperty Name="request_id" ColumnName="request_id" />
+                <ScalarProperty Name="help_name" ColumnName="help_name" />
+                <ScalarProperty Name="req_date" ColumnName="req_date" />
+                <ScalarProperty Name="distance" ColumnName="distance" />
+                <ScalarProperty Name="req_status" ColumnName="req_status" />
+                <ScalarProperty Name="start_street_name" ColumnName="start_street_name" />
+                <ScalarProperty Name="start_address_numb" ColumnName="start_address_numb" />
+                <ScalarProperty Name="destination_street_name" ColumnName="destination_street_name" />
+                <ScalarProperty Name="destination_address_numb" ColumnName="destination_address_numb" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

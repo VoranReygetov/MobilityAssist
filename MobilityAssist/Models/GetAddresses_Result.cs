@@ -13,11 +13,10 @@ namespace MobilityAssist.Models
     
     public partial class GetAddresses_Result
     {
-        public string street_name { get; set; }
-        public string address_numb { get; set; }
         public int street_id { get; set; }
         public int address_id { get; set; }
         public double address_coordx { get; set; }
         public double address_coordy { get; set; }
+        public string street { get; set; }
     }
 }

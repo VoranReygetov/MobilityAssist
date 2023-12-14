@@ -1,0 +1,67 @@
+﻿@model MobilityAssist.Models.GetRequests_Result
+
+@{
+    ViewBag.Title = "DeleteRequest";
+}
+
+<h2>Ви впевнені, що хочете виділити запит?</h2>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Початок</th>
+            <th scope="col">Призначення</th>
+            <th scope="col">Необхідна допомога</th>
+            <th scope="col">Дата запиту</th>
+            <th scope="col">Відстань</th>
+            <th scope="col">Статус</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.request_id)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.start_street_name), @Html.DisplayFor(model => model.start_address_numb)
+            </td>
+            <td>
+                @if (!string.IsNullOrEmpty(Model.destination_street_name) && !string.IsNullOrEmpty(Model.destination_address_numb))
+                {
+                <p>@Html.DisplayFor(model => model.destination_street_name), @Html.DisplayFor(model => model.destination_address_numb)</p>
+                }
+            </td>
+            <td style="font-weight:bold">
+                @Html.DisplayFor(model => model.help_name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.req_date)
+            </td>
+            <td>
+                @if (Model.distance != null)
+                {
+                <p>@Html.DisplayFor(model => model.distance) km</p>
+                }
+            </td>
+            <td>
+                @if (Model.req_status == false)
+                {
+                <p style="font-weight:bold; color:darkred">Відкритий</p>
+                }
+                else
+                {
+                <p style="font-weight:bold; color:darkred">Відповіли</p>
+                }
+            </td>
+            <td>
+                @using (Html.BeginForm("DeleteRequest", "App", new { request_id = Model.request_id }, FormMethod.Post))
+                {
+                <button type="submit" class="btn btn-danger">Видалити</button>
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<a type="button" href="@Url.Action("RequestListDashBoard", "App")" class="btn btn-light">Повернутись</a>

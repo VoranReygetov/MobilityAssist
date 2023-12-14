@@ -29,8 +29,7 @@ namespace MobilityAssist.Controllers
             return View();
         }
         public ActionResult Login()
-        {
-            
+        {            
             return View();
         }
 
@@ -38,48 +37,30 @@ namespace MobilityAssist.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(User objUser)
         {
-            if (ModelState.IsValid)
-            {
-                using (MobilityAssistEntities db = new MobilityAssistEntities())
-                {
-                    var obj = db.Users.Where(a => a.email.Equals(objUser.email) && a.password.Equals(objUser.password)).FirstOrDefault();
-                    if (obj != null)
-                    {
-                        //FormsAuthentication.SetAuthCookie(obj.email, false);
-                        Session["UserID"] = obj.user_id.ToString();
-                        Session["FirstName"] = obj.first_name.ToString();
-                        Session["Role"] = obj.user_role.ToString();
-                        return RedirectToAction("UserDashBoard", "App");
-                    }
-                }
-                ViewBag.Message = "Credentials is not valid";
-            }
-            return View(objUser);
-        }
-
-        public List<SelectListItem> GetRoleItems()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
-                foreach (Role role in db.Roles)
+                var obj = db.Users.Where(a => a.email.Equals(objUser.email) && a.password.Equals(objUser.password)).First();
+                if (obj != null)
                 {
-                    items.Add(new SelectListItem { Text = role.role_name, Value = role.role_id.ToString() });
+                    Session["UserID"] = obj.user_id.ToString();
+                    Session["FirstName"] = obj.first_name.ToString();
+                    Session["Role"] = obj.user_role.ToString();
+                    return RedirectToAction("UserDashBoard", "App");
                 }
             }
-            return items;
+            ViewBag.Message = "Credentials is not valid";
+            return View(objUser);
         }
         [HttpGet]
         public ActionResult Register()
         {
             User objUser = new User();
-            ViewBag.RoleType = GetRoleItems();
             return View(objUser);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(User objUser, string RoleType)
+        public ActionResult Register(User objUser)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +68,6 @@ namespace MobilityAssist.Controllers
                 {
                     try
                     {
-                        objUser.Role = db.Roles.Find(int.Parse(RoleType));
                         db.Users.Add(objUser);
                         db.SaveChanges();
                         Session["UserID"] = objUser.user_id.ToString();
@@ -102,10 +82,12 @@ namespace MobilityAssist.Controllers
                 }
                 
             }
-
-            ViewBag.RoleType = GetRoleItems();
             return View(objUser);
         }
-
+        public ActionResult LogOut()
+        {
+            Session.Clear();
+            return View("Login");
+        }
     }
 }
