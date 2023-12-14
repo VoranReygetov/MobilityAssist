@@ -1,0 +1,40 @@
+﻿@model MobilityAssist.Models.Request
+@{
+    ViewBag.Title = "MakeExtraRequests";
+}
+@{
+    List<MobilityAssist.Models.HType> helplist = new List<MobilityAssist.Models.HType>();
+    List<MobilityAssist.Models.GetAddresses_Result> addresslist = new List<MobilityAssist.Models.GetAddresses_Result>();
+
+    using (MobilityAssist.Models.MobilityAssistEntities db = new MobilityAssist.Models.MobilityAssistEntities())
+    {
+        helplist = db.HTypes.ToList();
+        addresslist = db.GetAddresses().ToList();
+    }
+}
+<div>
+    <h2>Зробити екстрений запит</h2>
+    @using (Html.BeginForm("MakeExtraRequests", "App", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.address_id, "Де ви знаходитесь", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{SelectList selectaddress = new SelectList(addresslist, "address_id", "street");
+                }
+                @Html.DropDownListFor(model => model.address_id, selectaddress, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.address_id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top:12px">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-outline-danger">Створити запит</button>
+            </div>
+        </div>
+    }
+    <a type="button" href="@Url.Action("ExtraDashBoard", "App")" class="btn btn-light" style="margin:12px; margin-left:0px">Повернутись</a>
+
+</div>
+

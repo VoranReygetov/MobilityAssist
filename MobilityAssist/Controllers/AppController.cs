@@ -52,11 +52,11 @@ namespace MobilityAssist.Controllers
             ViewBag.Message = Greeting();
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
-                var extrareq = db.GetExtra(Convert.ToInt16(Session["UserID"]));
+                var extrareq = db.GetExtra(Convert.ToInt16(Session["UserID"])).ToList();
 
                 if (extrareq.Any())
                 {
-                    ViewData.Add("extrdata", extrareq.ToList());
+                    ViewData.Add("extrdata", extrareq);
                 }
             }
             return View();
@@ -171,7 +171,7 @@ namespace MobilityAssist.Controllers
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
 
-                    var helpuser = db.Users.Where(user => user.email == email & user.Role.role_name == "support").FirstOrDefault();
+                var helpuser = db.Users.Where(user => user.email == email & user.Role.role_name == "support").FirstOrDefault();
                 if (helpuser == null)
                 {
                     TempData["Alert"] = "Немає помічника з такою поштою";
@@ -186,8 +186,16 @@ namespace MobilityAssist.Controllers
                     return RedirectToAction("ExtraDashBoard", "App");
 
                 }
-                currentuser.Users1.Add(helpuser);
-                db.SaveChanges();
+                try
+                {
+                    currentuser.Users1.Add(helpuser);
+                    db.SaveChanges();
+                }
+                catch
+                {
+                    TempData["Alert"] = "Ой, щось пішло не так";
+                    return RedirectToAction("ExtraDashBoard", "App");
+                }
                 return RedirectToAction("ExtraDashBoard", "App");
             }
         }
@@ -213,6 +221,31 @@ namespace MobilityAssist.Controllers
                 }
             }
 
+        }
+        public ActionResult MakeExtraRequests()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult MakeExtraRequests(Request request)
+        {
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {                
+                try
+                {
+                    request.User = db.Users.Find(Convert.ToInt16(Session["UserID"]));
+                    request.req_date = DateTime.Now;
+                    request.HType = db.HTypes.Where(help => help.help_name == "Екстрена").First();
+                    db.Requests.Add(request);
+                    db.SaveChanges();
+                    return RedirectToAction("RequestListDashBoard", "App");
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = "Ой, щось пішло не так!\t" + ex;
+                }
+            }
+            return RedirectToAction("RequestListDashBoard");
         }
     }
 }
