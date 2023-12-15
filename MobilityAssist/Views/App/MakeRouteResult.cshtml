@@ -1,0 +1,46 @@
+﻿@model MobilityAssist.Models.GetDistance_Result
+@{
+    ViewBag.Title = "MakeRouteResult";
+}
+
+<h2>Маршрут</h2>
+
+<div>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Початок</th>
+                <th scope="col">Призначення</th>
+                <th scope="col">Відстань</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="height: auto">
+                <td>
+                    @Html.DisplayFor(model => model.start_street_name), @Html.DisplayFor(model => model.start_address_numb)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.destination_street_name), @Html.DisplayFor(model => model.destination_address_numb)
+                <td>
+                    @Html.DisplayFor(model => model.distance) km
+                </td>
+                @if (Model.is_adaptated == false && Session["Role"].ToString() == "1")
+                {
+                    <p style="font-size:18px; font-style:italic">Ваша точка призначення не приналаштована для людей з вадами. Хочете звернутись по допомогу?</p>
+                    <td>
+
+                        @using (Html.BeginForm("RequestDashBoard", "App", new { address_id = Model.start_address_id, destination_id = Model.destination_address_id, user_id = Convert.ToInt32(Session["UserId"]), help_id = 2 }, FormMethod.Post))
+                        {
+                            <input type="submit" class="btn btn-primary" value="Звернутись" />
+                        }
+
+                    </td>
+                }
+                <td>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a type="button" href="@Url.Action("MakeRouteDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
+</div>

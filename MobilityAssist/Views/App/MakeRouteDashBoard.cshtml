@@ -1,0 +1,48 @@
+﻿@model MobilityAssist.Models.Request
+@{
+    ViewBag.Title = "MakeRouteDashBoard";
+}
+
+<h2>Створити маршрут</h2>
+
+@if (ViewBag.Alert != null)
+{
+    <p style="border: 1px solid red">
+        @ViewBag.Alert
+    </p>
+}
+@{
+    List<MobilityAssist.Models.GetAddresses_Result> addresslist = new List<MobilityAssist.Models.GetAddresses_Result>();
+
+    using (MobilityAssist.Models.MobilityAssistEntities db = new MobilityAssist.Models.MobilityAssistEntities())
+    {
+        addresslist = db.GetAddresses().ToList();
+    }
+}
+@using (Html.BeginForm("MakeRouteResult", "App", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.address_id, "Де ви знаходитесь", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{SelectList selectaddress = new SelectList(addresslist, "address_id", "street");
+            }
+            @Html.DropDownListFor(model => model.address_id, selectaddress, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.address_id, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.destination_id, "Куди вам треба", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(model => model.destination_id, selectaddress, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.destination_id, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group" style="margin-top:12px">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-outline-dark">Побудувати маршрут</button>
+        </div>
+    </div>
+}<a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
