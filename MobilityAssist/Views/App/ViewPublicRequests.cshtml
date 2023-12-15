@@ -1,0 +1,68 @@
+﻿@model IEnumerable<MobilityAssist.Models.Request>
+
+@{
+    ViewBag.Title = "ViewPublicRequests";
+}
+
+<h2>Запити про допомогу</h2>
+@if (ViewBag.Message != null)
+{
+    <p style="border: 1px solid red">
+        @ViewBag.Message
+    </p>
+}
+
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Ім'я</th>
+            <th scope="col">Адреса</th>
+            <th scope="col">Тип допомоги</th>
+            <th scope="col">Час</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+            @Html.Hidden("request_id", item.request_id)
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.first_name)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address.Street.street_name), @Html.DisplayFor(modelItem => item.Address.address_numb)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.HType.help_name)
+                </td>
+
+                <td>
+                    @{
+                        TimeSpan timeDifference = DateTime.Now - item.req_date;
+                        string formattedDifference = string.Format("{0} годин, {1} хвилин, {2} секунд",
+                                                timeDifference.Hours,
+                                                timeDifference.Minutes,
+                                                timeDifference.Seconds);
+                    }
+                    @formattedDifference
+                </td>
+
+                <td>
+                    @using (Html.BeginForm("AnswerPublicRequest", "App", new { request_id = item.request_id }, FormMethod.Post))
+                    {
+                        <button type="submit" class="btn btn-danger">Відповісти</button>
+                    }
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<div>
+    <a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
+</div>

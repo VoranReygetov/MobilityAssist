@@ -1,8 +1,10 @@
 ﻿using MobilityAssist.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -65,7 +67,7 @@ namespace MobilityAssist.Controllers
         [HttpGet]
         public ActionResult RequestDashBoard()
         {
-            if (Session["UserID"] == null && Session["Role"].ToString() != "1")
+            if (Session["UserID"] == null & Session["Role"].ToString() != "1")
                 return RedirectToAction("Login", "Home");
             Request request = new Request();
             return View(request);
@@ -257,15 +259,136 @@ namespace MobilityAssist.Controllers
 
             return View();
         }
+        [HttpPost]
         public ActionResult MakeRouteResult(FormCollection collection)
         {
-            if (Request.HttpMethod != "POST")
-                return RedirectToAction("UserDashBoard", "App");
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
                 var route = db.GetDistance(int.Parse(collection["address_id"]), int.Parse(collection["destination_id"])).First();
                 return View(route);
-            }                
+            }
+        }
+        public ActionResult ViewPublicRequests()
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Login", "Home");
+
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                var user_id = Convert.ToInt32(Session["UserID"]);
+                if (db.Responces.Where(responce => responce.user_id == user_id)
+                    .Where(responce => responce.Request.req_status == false).Any())
+                {
+                    return RedirectToAction("GetRouteToRequest");
+                }
+                var query = from req in db.Requests
+                            where !db.Responces.Any(res => res.req_id == req.request_id) &&
+                                  req.req_status == false &&
+                                  req.help_id != (from h in db.HTypes
+                                                  where h.help_name == "Екстрена"
+                                                  select h.help_id).FirstOrDefault()
+                            select req; //Not answered, completed and Extra requests query;
+
+                ViewData["addresslist"] = db.GetAddresses().ToList();
+                var viewreq = query.Include(item => item.User)
+                    .Include(item => item.Address)
+                    .Include(item => item.Address.Street)
+                    .Include(item => item.HType).ToList();
+                return View("ViewPublicRequests", viewreq);
+            }
+        }
+        public ActionResult AnswerPublicRequest(int? request_id)
+        {
+            if (Request.HttpMethod != "POST")
+                return RedirectToAction("UserDashBoard", "App");
+
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                ViewData["addresslist"] = db.GetAddresses().ToList();
+                var request = db.Requests.Include(item => item.User)
+                    .Include(item => item.Address)
+                    .Include(item => item.Address.Street)
+                    .Include(item => item.HType).First(req => req.request_id == request_id);
+                return View(request);
+            }
+        }
+        [HttpPost]
+        public ActionResult GetRouteToRequest(FormCollection collection)
+        {
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                try
+                {
+                    int req_id = int.Parse(collection["request_id"]);
+                    var user_id = Convert.ToInt32(Session["UserID"]);
+                    var request = db.Requests.Include(item => item.User).First(item => item.request_id == req_id);
+                    Responce response = new Responce();
+                    response.res_date = DateTime.Now;
+                    response.req_id = request.request_id;
+                    response.Address = db.Addresses.Find(int.Parse(collection["address"]));
+                    response.User = db.Users.Find(user_id);
+                    response.res_comm = collection["resp_desc"];
+                    db.Responces.Add(response);
+                    db.SaveChanges();
+
+                    //ViewData.Add("distance", db.GetDistance(int.Parse(collection["address"]), request.address_id));
+                    //ViewData.Add("help", request.HType.help_name);
+
+                    ViewData["distance"] = db.GetDistance(int.Parse(collection["address"]), request.address_id).First();
+                    ViewData["help"] = request.HType.help_name;
+
+                    return View(request);
+                }
+                catch
+                {
+                    ViewBag.Message = "Ой, щось пішло не так!";
+                    return RedirectToAction("AnswerPublicRequest", collection["collection"].First());
+                }
+            }
+        }
+        public ActionResult GetRouteToRequest()
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Login", "Home");
+
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                try
+                {
+                    var user_id = Convert.ToInt32(Session["UserID"]);
+                    var responce = db.Responces.Include(item => item.Request.User).Where(resp => resp.User.user_id == user_id).Where(resp => resp.Request.req_status == false).First();
+
+                    //ViewData.Add("distance", db.GetDistance(responce.address_id, responce.Request.address_id).First());
+                    //ViewData.Add("help", responce.Request.HType.help_name.ToString());
+
+                    ViewData["distance"] = db.GetDistance(responce.address_id, responce.Request.address_id).First();
+                    ViewData["help"] = responce.Request.HType.help_name.ToString();
+
+                    return View(responce.Request);
+                }
+                catch
+                {
+                    var user_id = Convert.ToInt32(Session["UserID"]);
+                    ViewBag.Message = "Ой, щось пішло не так!";
+                    return RedirectToAction("AnswerPublicRequest", db.Responces.Where(resp => resp.User.user_id == db.Users.Find(user_id).user_id).First().req_id);
+                }
+            }
+        }
+        public ActionResult MarkRequestCompleted(int request_id)
+        {
+            if (Request.HttpMethod != "POST")
+                return RedirectToAction("GetRouteToRequest", "App");
+
+            using (var db = new MobilityAssistEntities())
+            {
+                var requestToUpdate = db.Requests.First(r => r.request_id == request_id);
+                if (requestToUpdate != null)
+                {
+                    requestToUpdate.req_status = true;
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("ViewPublicRequests");
         }
     }
 }

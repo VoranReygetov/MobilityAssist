@@ -20,6 +20,7 @@ namespace MobilityAssist.Models
             this.Buildings = new HashSet<Building>();
             this.Requests = new HashSet<Request>();
             this.Requests1 = new HashSet<Request>();
+            this.Responces = new HashSet<Responce>();
         }
     
         public int address_id { get; set; }
@@ -36,5 +37,7 @@ namespace MobilityAssist.Models
         public virtual ICollection<Request> Requests { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Request> Requests1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Responce> Responces { get; set; }
     }
 }

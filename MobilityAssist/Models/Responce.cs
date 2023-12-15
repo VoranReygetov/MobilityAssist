@@ -19,8 +19,10 @@ namespace MobilityAssist.Models
         public int user_id { get; set; }
         public string res_comm { get; set; }
         public System.DateTime res_date { get; set; }
+        public int address_id { get; set; }
     
         public virtual Request Request { get; set; }
         public virtual User User { get; set; }
+        public virtual Address Address { get; set; }
     }
 }

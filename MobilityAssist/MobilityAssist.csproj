@@ -280,6 +280,9 @@
     <Content Include="Views\App\MakeExtraRequests.cshtml" />
     <Content Include="Views\App\MakeRouteDashBoard.cshtml" />
     <Content Include="Views\App\MakeRouteResult.cshtml" />
+    <Content Include="Views\App\ViewPublicRequests.cshtml" />
+    <Content Include="Views\App\AnswerPublicRequest.cshtml" />
+    <Content Include="Views\App\GetRouteToRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
