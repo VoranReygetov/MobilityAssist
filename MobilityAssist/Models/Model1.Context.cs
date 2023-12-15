@@ -171,5 +171,18 @@ namespace MobilityAssist.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetRequests_Result>("GetRequests", userIDParameter);
         }
+    
+        public virtual ObjectResult<GetDistance_Result> GetDistance(Nullable<int> startID, Nullable<int> endID)
+        {
+            var startIDParameter = startID.HasValue ?
+                new ObjectParameter("startID", startID) :
+                new ObjectParameter("startID", typeof(int));
+    
+            var endIDParameter = endID.HasValue ?
+                new ObjectParameter("endID", endID) :
+                new ObjectParameter("endID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetDistance_Result>("GetDistance", startIDParameter, endIDParameter);
+        }
     }
 }

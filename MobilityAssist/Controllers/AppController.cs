@@ -65,7 +65,7 @@ namespace MobilityAssist.Controllers
         [HttpGet]
         public ActionResult RequestDashBoard()
         {
-            if (Session["UserID"] == null)
+            if (Session["UserID"] == null && Session["Role"].ToString() != "1")
                 return RedirectToAction("Login", "Home");
             Request request = new Request();
             return View(request);
@@ -184,8 +184,8 @@ namespace MobilityAssist.Controllers
                 {
                     TempData["Alert"] = "Вже є помічник з такою поштою";
                     return RedirectToAction("ExtraDashBoard", "App");
-
                 }
+
                 try
                 {
                     currentuser.Users1.Add(helpuser);
@@ -224,13 +224,16 @@ namespace MobilityAssist.Controllers
         }
         public ActionResult MakeExtraRequests()
         {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Login", "Home");
+
             return View();
         }
         [HttpPost]
         public ActionResult MakeExtraRequests(Request request)
         {
             using (MobilityAssistEntities db = new MobilityAssistEntities())
-            {                
+            {
                 try
                 {
                     request.User = db.Users.Find(Convert.ToInt16(Session["UserID"]));
@@ -246,6 +249,23 @@ namespace MobilityAssist.Controllers
                 }
             }
             return RedirectToAction("RequestListDashBoard");
+        }
+        public ActionResult MakeRouteDashBoard()
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Login", "Home");
+
+            return View();
+        }
+        public ActionResult MakeRouteResult(FormCollection collection)
+        {
+            if (Request.HttpMethod != "POST")
+                return RedirectToAction("UserDashBoard", "App");
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                var route = db.GetDistance(int.Parse(collection["address_id"]), int.Parse(collection["destination_id"])).First();
+                return View(route);
+            }                
         }
     }
 }

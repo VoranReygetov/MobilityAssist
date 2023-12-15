@@ -233,6 +233,10 @@
         </Association>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="GetAddresses" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="GetDistance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="startID" Type="int" Mode="In" />
+          <Parameter Name="endID" Type="int" Mode="In" />
+        </Function>
         <Function Name="GetExtra" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ExtraMembID" Type="int" Mode="In" />
         </Function>
@@ -636,6 +640,10 @@
           <FunctionImport Name="GetRequests" ReturnType="Collection(MobilityAssistModel.GetRequests_Result)">
           <Parameter Name="UserID" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="GetDistance" ReturnType="Collection(MobilityAssistModel.GetDistance_Result)">
+            <Parameter Name="startID" Mode="In" Type="Int32" />
+            <Parameter Name="endID" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <Association Name="ExtraMembs">
           <End Type="MobilityAssistModel.User" Role="User" Multiplicity="*" />
@@ -687,6 +695,16 @@
           <Property Type="String" Name="start_address_numb" Nullable="false" MaxLength="5" />
           <Property Type="String" Name="destination_street_name" Nullable="true" MaxLength="50" />
           <Property Type="String" Name="destination_address_numb" Nullable="true" MaxLength="5" />
+        </ComplexType>
+        <ComplexType Name="GetDistance_Result">
+          <Property Type="Int32" Name="start_address_id" Nullable="false" />
+          <Property Type="String" Name="start_street_name" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="start_address_numb" Nullable="false" MaxLength="5" />
+          <Property Type="Int32" Name="destination_address_id" Nullable="false" />
+          <Property Type="String" Name="destination_street_name" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="destination_address_numb" Nullable="false" MaxLength="5" />
+          <Property Type="Double" Name="distance" Nullable="true" />
+          <Property Type="Boolean" Name="is_adaptated" Nullable="false" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -870,6 +888,20 @@
                 <ScalarProperty Name="start_address_numb" ColumnName="start_address_numb" />
                 <ScalarProperty Name="destination_street_name" ColumnName="destination_street_name" />
                 <ScalarProperty Name="destination_address_numb" ColumnName="destination_address_numb" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetDistance" FunctionName="MobilityAssistModel.Store.GetDistance">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MobilityAssistModel.GetDistance_Result">
+                <ScalarProperty Name="start_address_id" ColumnName="start_address_id" />
+                <ScalarProperty Name="start_street_name" ColumnName="start_street_name" />
+                <ScalarProperty Name="start_address_numb" ColumnName="start_address_numb" />
+                <ScalarProperty Name="destination_address_id" ColumnName="destination_address_id" />
+                <ScalarProperty Name="destination_street_name" ColumnName="destination_street_name" />
+                <ScalarProperty Name="destination_address_numb" ColumnName="destination_address_numb" />
+                <ScalarProperty Name="distance" ColumnName="distance" />
+                <ScalarProperty Name="is_adaptated" ColumnName="is_adaptated" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
