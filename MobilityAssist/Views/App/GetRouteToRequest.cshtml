@@ -1,0 +1,53 @@
+﻿@model MobilityAssist.Models.Request
+@{
+    ViewBag.Title = "GetRouteToRequest";
+}
+
+<h2>Ви відповіли на запит</h2>
+
+
+<h4>Маршрут</h4>
+@{ 
+    var distance = ViewData["distance"] as MobilityAssist.Models.GetDistance_Result;
+    var help = ViewData["help"].ToString();
+}
+<div>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Ім'я</th>
+                <th scope="col">Початок</th>
+                <th scope="col">Призначення</th>
+                <th scope="col">Відстань</th>
+                <th scope="col">Тип</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="height: auto">
+                <td>
+                    @Html.DisplayFor(model => model.User.first_name)
+                </td>
+                <td>
+                    @distance.start_street_name, @distance.start_address_numb
+                </td>
+                <td>
+                    @distance.destination_street_name, @distance.destination_address_numb
+                <td>
+                    @distance.distance.ToString() km
+                </td>
+                <td style="font-weight:bolder">
+                    @help
+                </td>
+                <td>
+                    @using (Html.BeginForm("MarkRequestCompleted", "App", FormMethod.Post))
+                    {
+                        @Html.Hidden("request_id", Model.request_id)
+                        <button type="submit" class="btn btn-success">Завершити</button>
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
+</div>

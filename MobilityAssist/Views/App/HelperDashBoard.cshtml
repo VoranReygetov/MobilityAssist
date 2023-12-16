@@ -8,7 +8,7 @@
     <table style="display: block; margin: 10px">
         <tbody>
             <tr>
-                <td><a class="btn btn-primary" href="@Url.Action("RequestDashBoard", "App")" role="button">Кому зараз допомогти</a></td>
+                <td><a class="btn btn-primary" href="@Url.Action("ViewPublicRequests", "App")" role="button">Кому зараз допомогти</a></td>
             </tr>
             <tr>
                 <td><a class="btn btn-primary" href="@Url.Action("MakeRouteDashBoard", "App")" role="button">Побудувати маршрут</a></td>
@@ -58,7 +58,10 @@
 
                             </td>
                             <td>
-                                <button type="button" class="btn btn-danger">Відповісти</button>
+                                @using (Html.BeginForm("AnswerPublicRequest", "App", new { request_id = req.request_id }, FormMethod.Post))
+                                {
+                                    <button type="submit" class="btn btn-danger">Відповісти</button>
+                                }
                             </td>
                         </tr>
                     }

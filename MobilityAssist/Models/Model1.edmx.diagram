@@ -24,6 +24,7 @@
         <AssociationConnector Association="MobilityAssistModel.FK__Responces__user___534D60F1" ManuallyRouted="false" />
         <AssociationConnector Association="MobilityAssistModel.FK__Users__user_role__267ABA7A" ManuallyRouted="false" />
         <AssociationConnector Association="MobilityAssistModel.ExtraMembs" />
+        <AssociationConnector Association="MobilityAssistModel.FK__Responces__addre__40058253" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

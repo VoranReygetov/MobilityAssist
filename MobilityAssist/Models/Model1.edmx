@@ -61,6 +61,7 @@
           <Property Name="res_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="req_id" Type="int" Nullable="false" />
           <Property Name="user_id" Type="int" Nullable="false" />
+          <Property Name="address_id" Type="int" Nullable="false" />
           <Property Name="res_comm" Type="text" />
           <Property Name="res_date" Type="datetime" Nullable="false" />
         </EntityType>
@@ -195,7 +196,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Responces__req_i__0B91BA14">
+        <Association Name="FK__Responces__addre__40058253">
+          <End Role="Addresses" Type="Self.Addresses" Multiplicity="1" />
+          <End Role="Responces" Type="Self.Responces" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Addresses">
+              <PropertyRef Name="address_id" />
+            </Principal>
+            <Dependent Role="Responces">
+              <PropertyRef Name="address_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Responces__req_i__3F115E1A">
           <End Role="Requests" Type="Self.Requests" Multiplicity="1" />
           <End Role="Responces" Type="Self.Responces" Multiplicity="*" />
           <ReferentialConstraint>
@@ -207,8 +220,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Responces__user___02084FDA">
-          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+        <Association Name="FK__Responces__user___40F9A68C">
+          <End Role="Users" Type="Self.Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="Responces" Type="Self.Responces" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Users">
@@ -319,11 +334,15 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="Requests" EntitySet="Requests" />
           </AssociationSet>
-          <AssociationSet Name="FK__Responces__req_i__0B91BA14" Association="Self.FK__Responces__req_i__0B91BA14">
+          <AssociationSet Name="FK__Responces__addre__40058253" Association="Self.FK__Responces__addre__40058253">
+            <End Role="Addresses" EntitySet="Addresses" />
+            <End Role="Responces" EntitySet="Responces" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Responces__req_i__3F115E1A" Association="Self.FK__Responces__req_i__3F115E1A">
             <End Role="Requests" EntitySet="Requests" />
             <End Role="Responces" EntitySet="Responces" />
           </AssociationSet>
-          <AssociationSet Name="FK__Responces__user___02084FDA" Association="Self.FK__Responces__user___02084FDA">
+          <AssociationSet Name="FK__Responces__user___40F9A68C" Association="Self.FK__Responces__user___40F9A68C">
             <End Role="Users" EntitySet="Users" />
             <End Role="Responces" EntitySet="Responces" />
           </AssociationSet>
@@ -350,6 +369,7 @@
           <NavigationProperty Name="Buildings" Relationship="Self.FK__Buildings__addre__6C190EBB" FromRole="Addresses" ToRole="Buildings" />
           <NavigationProperty Name="Requests" Relationship="Self.FK__Requests__addres__66603565" FromRole="Addresses" ToRole="Requests" />
           <NavigationProperty Name="Requests1" Relationship="Self.FK__Requests__destin__693CA210" FromRole="Addresses" ToRole="Requests" />
+          <NavigationProperty Name="Responces" Relationship="MobilityAssistModel.FK__Responces__addre__40058253" FromRole="Address" ToRole="Responce" />
         </EntityType>
         <EntityType Name="Building">
           <Key>
@@ -399,6 +419,8 @@
           <Property Name="res_date" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="Request" Relationship="Self.FK__Responces__req_i__68487DD7" FromRole="Responces" ToRole="Requests" />
           <NavigationProperty Name="User" Relationship="Self.FK__Responces__user___534D60F1" FromRole="Responces" ToRole="Users" />
+          <Property Name="address_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Address" Relationship="MobilityAssistModel.FK__Responces__addre__40058253" FromRole="Responce" ToRole="Address" />
         </EntityType>
         <EntityType Name="Role">
           <Key>
@@ -644,6 +666,10 @@
             <Parameter Name="startID" Mode="In" Type="Int32" />
             <Parameter Name="endID" Mode="In" Type="Int32" />
           </FunctionImport>
+          <AssociationSet Name="FK__Responces__addre__40058253" Association="MobilityAssistModel.FK__Responces__addre__40058253">
+            <End Role="Address" EntitySet="Addresses" />
+            <End Role="Responce" EntitySet="Responces" />
+          </AssociationSet>
         </EntityContainer>
         <Association Name="ExtraMembs">
           <End Type="MobilityAssistModel.User" Role="User" Multiplicity="*" />
@@ -706,6 +732,18 @@
           <Property Type="Double" Name="distance" Nullable="true" />
           <Property Type="Boolean" Name="is_adaptated" Nullable="false" />
         </ComplexType>
+        <Association Name="FK__Responces__addre__40058253">
+          <End Type="MobilityAssistModel.Address" Role="Address" Multiplicity="1" />
+          <End Type="MobilityAssistModel.Responce" Role="Responce" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Address">
+              <PropertyRef Name="address_id" />
+            </Principal>
+            <Dependent Role="Responce">
+              <PropertyRef Name="address_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -760,6 +798,7 @@
           <EntitySetMapping Name="Responces">
             <EntityTypeMapping TypeName="MobilityAssistModel.Responce">
               <MappingFragment StoreEntitySet="Responces">
+                <ScalarProperty Name="address_id" ColumnName="address_id" />
                 <ScalarProperty Name="res_id" ColumnName="res_id" />
                 <ScalarProperty Name="req_id" ColumnName="req_id" />
                 <ScalarProperty Name="user_id" ColumnName="user_id" />
