@@ -70,6 +70,14 @@ namespace MobilityAssist.Controllers
             if (Session["UserID"] == null & Session["Role"].ToString() != "1")
                 return RedirectToAction("Login", "Home");
             Request request = new Request();
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                SelectList selectaddress = new SelectList(db.GetAddresses().ToList(), "address_id", "street");
+                SelectList selecthelp = new SelectList(db.HTypes.ToList(), "help_id", "help_name");
+
+                ViewData["helplist"] = selecthelp;
+                ViewData["addresslist"] = selectaddress;
+            }
             return View(request);
         }
 
@@ -229,6 +237,11 @@ namespace MobilityAssist.Controllers
             if (Session["UserID"] == null)
                 return RedirectToAction("Login", "Home");
 
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                SelectList selectaddress = new SelectList(db.GetAddresses().ToList(), "address_id", "street");
+                ViewData["addresslist"] = selectaddress;
+            }
             return View();
         }
         [HttpPost]
@@ -257,6 +270,11 @@ namespace MobilityAssist.Controllers
             if (Session["UserID"] == null)
                 return RedirectToAction("Login", "Home");
 
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                SelectList selectaddress = new SelectList(db.GetAddresses().ToList(), "address_id", "street");
+                ViewData["addresslist"] = selectaddress;
+            }
             return View();
         }
         [HttpPost]

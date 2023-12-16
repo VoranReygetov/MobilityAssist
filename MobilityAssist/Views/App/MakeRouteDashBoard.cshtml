@@ -12,13 +12,9 @@
     </p>
 }
 @{
-    List<MobilityAssist.Models.GetAddresses_Result> addresslist = new List<MobilityAssist.Models.GetAddresses_Result>();
-
-    using (MobilityAssist.Models.MobilityAssistEntities db = new MobilityAssist.Models.MobilityAssistEntities())
-    {
-        addresslist = db.GetAddresses().ToList();
-    }
+    var selectaddress = ViewData["addresslist"] as SelectList;
 }
+
 @using (Html.BeginForm("MakeRouteResult", "App", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
@@ -26,8 +22,6 @@
     <div class="form-group">
         @Html.LabelFor(model => model.address_id, "Де ви знаходитесь", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @{SelectList selectaddress = new SelectList(addresslist, "address_id", "street");
-            }
             @Html.DropDownListFor(model => model.address_id, selectaddress, new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.address_id, "", new { @class = "text-danger" })
         </div>

@@ -39,17 +39,18 @@ namespace MobilityAssist.Controllers
         {
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
-                var obj = db.Users.Where(a => a.email.Equals(objUser.email) && a.password.Equals(objUser.password)).First();
-                if (obj != null)
+                var obj = db.Users.Where(a => a.email.Equals(objUser.email) && a.password.Equals(objUser.password));
+                if(!obj.Any())
                 {
-                    Session["UserID"] = obj.user_id.ToString();
-                    Session["FirstName"] = obj.first_name.ToString();
-                    Session["Role"] = obj.user_role.ToString();
-                    return RedirectToAction("UserDashBoard", "App");
+                    ViewBag.Message = "Credentials is not valid";
+                    return View();
                 }
+                Session["UserID"] = obj.First().user_id.ToString();
+                Session["FirstName"] = obj.First().first_name.ToString();
+                Session["Role"] = obj.First().user_role.ToString();
+                return RedirectToAction("UserDashBoard", "App");
             }
-            ViewBag.Message = "Credentials is not valid";
-            return View(objUser);
+            
         }
         [HttpGet]
         public ActionResult Register()
