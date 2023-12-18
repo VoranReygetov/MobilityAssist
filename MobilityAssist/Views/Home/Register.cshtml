@@ -24,12 +24,8 @@
         </p>
     }
     @{
-        List<MobilityAssist.Models.Role> rolelist = new List<MobilityAssist.Models.Role>();
-
-        using (MobilityAssist.Models.MobilityAssistEntities db = new MobilityAssist.Models.MobilityAssistEntities())
-        {
-            rolelist = db.Roles.ToList();
-        }
+        var rolelist = ViewData["rolelist"] as List<MobilityAssist.Models.Role>;
+        SelectList selectrole = new SelectList(rolelist, "role_id", "role_name");
     }
 
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -69,9 +65,7 @@
     <div class="form-group">
         @Html.LabelFor(model => model.user_role, "Роль", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @{SelectList selecthelp = new SelectList(rolelist, "role_id", "role_name");
-            }
-            @Html.DropDownListFor(model => model.user_role, selecthelp, new { @class = "form-control" })
+            @Html.DropDownListFor(model => model.user_role, selectrole, new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.user_role, "", new { @class = "text-danger" })
         </div>
     </div>

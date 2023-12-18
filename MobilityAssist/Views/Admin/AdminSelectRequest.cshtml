@@ -1,0 +1,68 @@
+﻿@model MobilityAssist.Models.Request
+@{
+    ViewBag.Title = "AdminDeleteRequest";
+}
+
+<h2>AdminDeleteRequest</h2>
+
+<h2>Хочете видалити цей запит?</h2>
+
+
+<hr />
+@if (ViewBag.Message != null)
+{
+    <p style="border: 1px solid red">
+        @ViewBag.Message
+    </p>
+}
+
+
+@using (Html.BeginForm("AdminDeleteRequest", "Admin", FormMethod.Post, htmlAttributes: new { @id = "public_request_delete" }))
+{
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Ім'я</th>
+                <th scope="col">Адреса</th>
+                <th scope="col">Тип допомоги</th>
+                <th scope="col">Час</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @Html.HiddenFor(modelItem => modelItem.request_id)
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => model.User.first_name)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.Address.Street.street_name), @Html.DisplayFor(model => model.Address.address_numb)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(model => model.HType.help_name)
+                </td>
+
+                <td>
+                    @{
+                        TimeSpan timeDifference = DateTime.Now - Model.req_date;
+                        string formattedDifference = string.Format("{0} годин, {1} хвилин, {2} секунд",
+                                                timeDifference.Hours,
+                                                timeDifference.Minutes,
+                                                timeDifference.Seconds);
+                    }
+                    @formattedDifference
+                </td>
+
+                <td>
+                    <button type="submit" class="btn btn-danger">Видалити</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+<a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
+

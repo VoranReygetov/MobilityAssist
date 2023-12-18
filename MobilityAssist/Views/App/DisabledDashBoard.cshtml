@@ -3,6 +3,9 @@
     ViewBag.Title = "DisabledDashBoard";
     Layout = "~/Views/App/_DashBoardLayout.cshtml";
 }
+@{
+   Dictionary<int, double?> distance = ViewData["distance"] as Dictionary<int, double?>;
+}
 
 <div>
     <table style="display:block">
@@ -21,6 +24,52 @@
             </tr>
         </tbody>
     </table>
+    @{
+        if (@ViewData["extrdata"] != null)
+        {
+
+            <p style="font-weight: bold; font-size: 24px">На ваш запит відповіли! Зачекайте, поки до вас підійдуть.</p>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Ім'я</th>
+                        <th scope="col">Відстань</th>
+                        <th scope="col">Пройшло часу</th>
+                        <th scope="col">Коментар</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var resp in @ViewData["extrdata"] as IEnumerable
+                        <MobilityAssist.Models.Responce>)
+                    {
+                        <tr>
+                            <td>
+                                @resp.User.first_name @resp.User.last_name
+                            </td>
+                            <td>
+                                @distance[resp.res_id] km                                
+                            </td>
+                            <td>
+                                @{
+                                    TimeSpan timeDifference = DateTime.Now - resp.res_date;
+                                    string formattedDifference = string.Format("{0} годин, {1} хвилин, {2} секунд",
+                                                            timeDifference.Hours,
+                                                            timeDifference.Minutes,
+                                                            timeDifference.Seconds);
+                                }
+
+                                @formattedDifference
+
+                            </td>
+                            <td>
+                                @resp.res_comm
+                            </td>
+                        </tr>
+                    }
+                <tbody>
+            </table>
+        }
+    }
 </div>
 
 

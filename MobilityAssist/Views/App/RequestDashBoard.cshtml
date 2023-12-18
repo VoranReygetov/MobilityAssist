@@ -5,11 +5,15 @@
 }
 @{
     var selecthelp = ViewData["helplist"] as SelectList;
-    var selectaddress = ViewData["addresslist"] as SelectList;
+    var selectaddress = ViewData["addresslist"] as SelectList;//No empty option
+}
+@{
+    var emptyOption = new SelectListItem { Text = "", Value = "" };
+    var addressListWithEmptyOption = new List<SelectListItem> { emptyOption };
+    addressListWithEmptyOption.AddRange(selectaddress);//With empty option
 }
 
-
-@using (Html.BeginForm("RequestDashBoard", "App", FormMethod.Post))
+@using (Html.BeginForm("RequestDashBoard", "App", FormMethod.Post, htmlAttributes: new { @id = "request_create" }))
 {
     @Html.AntiForgeryToken()
 
@@ -36,7 +40,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.destination_id, "Куди вам треба", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.destination_id, selectaddress, new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.destination_id, addressListWithEmptyOption, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.destination_id, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -69,3 +73,18 @@
 <div>
     <a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
 </div>
+
+<script>
+    document.getElementById('request_create').onsubmit = function () {
+        var dropdownValue = document.getElementById('address_id').value;
+        if (dropdownValue === "") {
+            alert('Оберіть адресу');
+            return false; // Prevent form submission
+        }
+        var dropdownDestinationValue = document.getElementById('destination_id').value;
+        if (dropdownDestinationValue === dropdownValue) {
+            alert('Оберіть різні адреси');
+            return false; // Prevent form submission
+        }
+    };
+</script>

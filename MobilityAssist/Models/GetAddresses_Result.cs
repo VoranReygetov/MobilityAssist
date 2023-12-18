@@ -18,5 +18,6 @@ namespace MobilityAssist.Models
         public double address_coordx { get; set; }
         public double address_coordy { get; set; }
         public string street { get; set; }
+        public bool is_adaptated { get; set; }
     }
 }

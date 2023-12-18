@@ -8,13 +8,13 @@ using System.Net;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Web.Security;
 
 namespace MobilityAssist.Controllers
 {
     public class AppController : Controller
     {
-        // GET: App
         Random rnd = new Random();
         public ActionResult UserDashBoard()
         {
@@ -25,6 +25,8 @@ namespace MobilityAssist.Controllers
             {
                 if (Session["Role"].Equals(db.Roles.First(role => role.role_name == "disabled").role_id.ToString())) //check for role
                     return RedirectToAction("DisabledDashBoard");
+                if (Session["Role"].Equals(db.Roles.First(role => role.role_name == "admin").role_id.ToString()))
+                    return RedirectToAction("AdminDashBoard", "Admin");
                 return RedirectToAction("HelperDashBoard");
             }
         }
@@ -40,17 +42,36 @@ namespace MobilityAssist.Controllers
             int choose = rnd.Next(0, hello.Count());
             return hello[choose];
         }
+        [DisabledCheck]
         public ActionResult DisabledDashBoard()
         {
-            if (Session["UserID"] == null)
-                return RedirectToAction("Login", "Home");
+            int user_id = Convert.ToInt16(Session["UserID"]);
             ViewBag.Message = Greeting();
+            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            {
+                var extrareq = db.Responces
+                    .Include(resp => resp.User)
+                    .Include(resp => resp.Address)
+                    .Where(resp => resp.Request.user_id == user_id & resp.Request.req_status != true);
+
+                Dictionary<int, double?> distance = new Dictionary<int, double?>();
+                foreach (var resp in extrareq)
+                {
+                    distance[resp.res_id] = db.GetDistance(resp.address_id, resp.Request.address_id).First().distance;
+                }
+
+                if (extrareq.Any())
+                {
+                    ViewData.Add("distance", distance);
+                    ViewData.Add("extrdata", extrareq.ToList());
+                }
+            }
             return View();
         }
+
+        [HelperCheck]
         public ActionResult HelperDashBoard()
         {
-            if (Session["UserID"] == null)
-                return RedirectToAction("Login", "Home");
             ViewBag.Message = Greeting();
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
@@ -65,10 +86,9 @@ namespace MobilityAssist.Controllers
         }
 
         [HttpGet]
+        [DisabledCheck]
         public ActionResult RequestDashBoard()
         {
-            if (Session["UserID"] == null & Session["Role"].ToString() != "1")
-                return RedirectToAction("Login", "Home");
             Request request = new Request();
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
@@ -82,6 +102,7 @@ namespace MobilityAssist.Controllers
         }
 
         [HttpPost]
+        [DisabledCheck]
         public ActionResult RequestDashBoard(Request request)
         {
             if (ModelState.IsValid)
@@ -105,26 +126,26 @@ namespace MobilityAssist.Controllers
             }
             return View(request);
         }
+
+        [DisabledCheck]
         public ActionResult RequestListDashBoard()
         {
-            if (Session["UserID"] == null)
-                return RedirectToAction("Login", "Home");
 
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
                 var requestquery = db.GetRequests(Convert.ToInt16(Session["UserID"]));
                 if (requestquery != null)
                 {
-                    ViewData.Add("requestquery", requestquery.ToList());
+                    ViewData["requestquery"] =  requestquery.ToList();
                 }
             }
             return View();
         }
+
         [HttpGet]
+        [DisabledCheck]
         public ActionResult DeleteRequest(int? request_id)
         {
-            if (Session["UserID"] == null)
-                return RedirectToAction("Login", "Home");
             if (request_id == null)
                 return RedirectToAction("RequestListDashBoard", "App");
 
@@ -134,7 +155,9 @@ namespace MobilityAssist.Controllers
                 return View(request);
             }
         }
+
         [HttpPost]
+        [DisabledCheck]
         public ActionResult DeleteRequest(int? request_id, FormCollection collection)
         {
             if (Session["UserID"] == null)
@@ -157,11 +180,10 @@ namespace MobilityAssist.Controllers
                 }
             }
         }
+
+        [DisabledCheck]
         public ActionResult ExtraDashBoard()
         {
-            if (Session["UserID"] == null)
-                return RedirectToAction("Login", "Home");
-
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
                 int id = Convert.ToInt16(Session["UserID"]);
@@ -174,6 +196,8 @@ namespace MobilityAssist.Controllers
             }
             return View();
         }
+
+        [DisabledCheck]
         public ActionResult AddExtraUser(string email)
         {
             if (Request.HttpMethod != "POST")
@@ -209,6 +233,8 @@ namespace MobilityAssist.Controllers
                 return RedirectToAction("ExtraDashBoard", "App");
             }
         }
+
+        [DisabledCheck]
         public ActionResult DeleteExtraUser(int extra_id)
         {
             if (Request.HttpMethod != "POST")
@@ -232,6 +258,8 @@ namespace MobilityAssist.Controllers
             }
 
         }
+
+        [DisabledCheck]
         public ActionResult MakeExtraRequests()
         {
             if (Session["UserID"] == null)
@@ -244,7 +272,10 @@ namespace MobilityAssist.Controllers
             }
             return View();
         }
+
+
         [HttpPost]
+        [DisabledCheck]
         public ActionResult MakeExtraRequests(Request request)
         {
             using (MobilityAssistEntities db = new MobilityAssistEntities())
@@ -265,11 +296,10 @@ namespace MobilityAssist.Controllers
             }
             return RedirectToAction("RequestListDashBoard");
         }
+
+
         public ActionResult MakeRouteDashBoard()
         {
-            if (Session["UserID"] == null)
-                return RedirectToAction("Login", "Home");
-
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
                 SelectList selectaddress = new SelectList(db.GetAddresses().ToList(), "address_id", "street");
@@ -277,6 +307,7 @@ namespace MobilityAssist.Controllers
             }
             return View();
         }
+
         [HttpPost]
         public ActionResult MakeRouteResult(FormCollection collection)
         {
@@ -286,10 +317,10 @@ namespace MobilityAssist.Controllers
                 return View(route);
             }
         }
+
+        [HelperCheck]
         public ActionResult ViewPublicRequests()
         {
-            if (Session["UserID"] == null)
-                return RedirectToAction("Login", "Home");
 
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
@@ -305,16 +336,18 @@ namespace MobilityAssist.Controllers
                                   req.help_id != (from h in db.HTypes
                                                   where h.help_name == "Екстрена"
                                                   select h.help_id).FirstOrDefault()
-                            select req; //Not answered, completed and Extra requests query;
+                            select req;     //Not answered, incompleted and Extra requests query;
 
                 ViewData["addresslist"] = db.GetAddresses().ToList();
                 var viewreq = query.Include(item => item.User)
                     .Include(item => item.Address)
                     .Include(item => item.Address.Street)
-                    .Include(item => item.HType).ToList();
+                    .Include(item => item.HType).ToList();      //requests list with includes
                 return View("ViewPublicRequests", viewreq);
             }
         }
+
+        [HelperCheck]
         public ActionResult AnswerPublicRequest(int? request_id)
         {
             if (Request.HttpMethod != "POST")
@@ -330,7 +363,9 @@ namespace MobilityAssist.Controllers
                 return View(request);
             }
         }
+
         [HttpPost]
+        [HelperCheck]
         public ActionResult GetRouteToRequest(FormCollection collection)
         {
             using (MobilityAssistEntities db = new MobilityAssistEntities())
@@ -338,19 +373,19 @@ namespace MobilityAssist.Controllers
                 try
                 {
                     int req_id = int.Parse(collection["request_id"]);
+                    int address_id = int.Parse(collection["address"]);
                     var user_id = Convert.ToInt32(Session["UserID"]);
                     var request = db.Requests.Include(item => item.User).First(item => item.request_id == req_id);
-                    Responce response = new Responce();
-                    response.res_date = DateTime.Now;
-                    response.req_id = request.request_id;
-                    response.Address = db.Addresses.Find(int.Parse(collection["address"]));
-                    response.User = db.Users.Find(user_id);
-                    response.res_comm = collection["resp_desc"];
+                    Responce response = new Responce
+                    {
+                        res_date = DateTime.Now,
+                        req_id = req_id,
+                        Address = db.Addresses.Find(address_id),
+                        User = db.Users.Find(user_id),
+                        res_comm = collection["resp_desc"]
+                    };
                     db.Responces.Add(response);
                     db.SaveChanges();
-
-                    //ViewData.Add("distance", db.GetDistance(int.Parse(collection["address"]), request.address_id));
-                    //ViewData.Add("help", request.HType.help_name);
 
                     ViewData["distance"] = db.GetDistance(int.Parse(collection["address"]), request.address_id).First();
                     ViewData["help"] = request.HType.help_name;
@@ -364,20 +399,20 @@ namespace MobilityAssist.Controllers
                 }
             }
         }
+
+        [HelperCheck]
         public ActionResult GetRouteToRequest()
         {
-            if (Session["UserID"] == null)
-                return RedirectToAction("Login", "Home");
 
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
                 try
                 {
                     var user_id = Convert.ToInt32(Session["UserID"]);
-                    var responce = db.Responces.Include(item => item.Request.User).Where(resp => resp.User.user_id == user_id).Where(resp => resp.Request.req_status == false).First();
-
-                    //ViewData.Add("distance", db.GetDistance(responce.address_id, responce.Request.address_id).First());
-                    //ViewData.Add("help", responce.Request.HType.help_name.ToString());
+                    var responce = db.Responces
+                        .Include(item => item.Request.User)
+                        .Where(resp => resp.User.user_id == user_id)
+                        .Where(resp => resp.Request.req_status == false).First();       //Responce element from User
 
                     ViewData["distance"] = db.GetDistance(responce.address_id, responce.Request.address_id).First();
                     ViewData["help"] = responce.Request.HType.help_name.ToString();
@@ -392,6 +427,7 @@ namespace MobilityAssist.Controllers
                 }
             }
         }
+
         public ActionResult MarkRequestCompleted(int request_id)
         {
             if (Request.HttpMethod != "POST")
@@ -406,7 +442,10 @@ namespace MobilityAssist.Controllers
                     db.SaveChanges();
                 }
             }
+
             return RedirectToAction("ViewPublicRequests");
-        }
+        }       
+
     }
+    
 }

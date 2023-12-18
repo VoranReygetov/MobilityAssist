@@ -12,6 +12,10 @@
     </p>
 }
 
+@{
+    bool admin = ViewData["role"] != null && ViewData["role"].ToString() == "admin";
+}
+
 
 <table class="table">
     <thead class="thead-dark">
@@ -20,6 +24,11 @@
             <th scope="col">Адреса</th>
             <th scope="col">Тип допомоги</th>
             <th scope="col">Час</th>
+            @if (admin)
+            {
+                <th scope="col">Статус</th>
+
+            }
             <th scope="col"></th>
         </tr>
     </thead>
@@ -51,11 +60,36 @@
                     }
                     @formattedDifference
                 </td>
+                @if (admin) 
+                 {
+                    <td>
+                        @if (item.req_status == false)
+                        {
+                            <p style="font-weight:bold; color:darkred">Відкритий</p>
+                        }
+                        else
+                        {
+                            <p style="font-weight:bold; color:forestgreen">Закритий</p>
+                        }
+
+                    </td>
+                 }
 
                 <td>
-                    @using (Html.BeginForm("AnswerPublicRequest", "App", new { request_id = item.request_id }, FormMethod.Post))
+                    @if (admin)
                     {
-                        <button type="submit" class="btn btn-danger">Відповісти</button>
+                        using (Html.BeginForm("AdminSelectRequest", "Admin", new { request_id = item.request_id }, FormMethod.Post))
+                        {
+                            <button type="submit" class="btn btn-danger">Видалити</button>
+                        }
+                    }
+                    else
+                    {
+
+                        using (Html.BeginForm("AnswerPublicRequest", "App", new { request_id = item.request_id }, FormMethod.Post))
+                        {
+                            <button type="submit" class="btn btn-danger">Відповісти</button>
+                        }
                     }
                 </td>
             </tr>

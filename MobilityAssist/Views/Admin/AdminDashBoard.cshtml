@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewBag.Title = "AdminDashBoard";
+}
+
+<h2>AdminDashBoard</h2>
+
+<div>
+    <table style="display: block; margin: 10px">
+        <tbody>
+            <tr>
+                <td><a class="btn btn-primary" href="@Url.Action("AdminViewRequests", "Admin")" role="button">Переглянути запити</a></td>
+            </tr>
+            <tr>
+                <td><a class="btn btn-primary" href="@Url.Action("AdminViewAddresses", "Admin")" role="button">Переглянути адреси</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
