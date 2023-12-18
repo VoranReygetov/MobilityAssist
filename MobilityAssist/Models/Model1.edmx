@@ -681,6 +681,7 @@
           <Property Type="Double" Name="address_coordx" Nullable="false" />
           <Property Type="Double" Name="address_coordy" Nullable="false" />
           <Property Type="String" Name="street" Nullable="false" MaxLength="57" />
+          <Property Type="Boolean" Name="is_adaptated" Nullable="false" />
         </ComplexType>
         <ComplexType Name="GetExtra_Result">
           <Property Type="Int32" Name="request_id" Nullable="false" />
@@ -862,6 +863,7 @@
                 <ScalarProperty Name="address_coordx" ColumnName="address_coordx" />
                 <ScalarProperty Name="address_coordy" ColumnName="address_coordy" />
                 <ScalarProperty Name="street" ColumnName="street" />
+                <ScalarProperty Name="is_adaptated" ColumnName="is_adaptated" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

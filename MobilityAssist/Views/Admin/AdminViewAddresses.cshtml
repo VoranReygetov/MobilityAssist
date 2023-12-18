@@ -1,0 +1,55 @@
+﻿@model IEnumerable<MobilityAssist.Models.GetAddresses_Result>
+
+@{
+    ViewBag.Title = "AdminViewAddresses";
+}
+
+<h2>Всі адреси</h2>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Адреса</th>
+            <th scope="col">Чи приналаштована</th>
+            <th scope="col">Координати</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var address in Model)
+        {
+            <tr>
+                <td>
+                    @address.street
+                </td>
+
+                <td>
+                    @if (address.is_adaptated == false)
+                    {
+                        <p style="font-weight:bold; color:darkred">Не адаптовано</p>
+                    }
+                    else
+                    {
+                        <p style="font-weight:bold; color:forestgreen">Адаптовано</p>
+                    }
+                </td>
+
+                <td style="font-weight:bolder">
+                    @address.address_coordx, @address.address_coordy
+                </td>
+
+                <td>
+                    <a href="@Url.Action("UpdateAddress", "Admin", new { address_id = address.address_id })" class="btn btn-secondary">Змінити</a>
+
+                </td>
+
+                <td>
+                    <a href="@Url.Action("DeletePageAddress", "Admin", new { address_id = address.address_id })" class="btn btn-danger">Видалити</a>
+                </td>
+            </tr>
+        }
+    <tbody>
+</table>
+<a href="@Url.Action("CreateAddress", "Admin")" class="btn btn-success" style="margin-top:12px">Додати</a>
+<a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>

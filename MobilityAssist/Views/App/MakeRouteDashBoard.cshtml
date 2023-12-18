@@ -15,7 +15,7 @@
     var selectaddress = ViewData["addresslist"] as SelectList;
 }
 
-@using (Html.BeginForm("MakeRouteResult", "App", FormMethod.Post))
+@using (Html.BeginForm("MakeRouteResult", "App", FormMethod.Post, htmlAttributes: new { @id = "make_route_post" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -40,3 +40,18 @@
         </div>
     </div>
 }<a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
+
+ <script>
+     document.getElementById('make_route_post').onsubmit = function () {
+        var dropdownValue = document.getElementById('address_id').value;
+        if (dropdownValue === "") {
+            alert('Оберіть адресу');
+            return false; // Prevent form submission
+        }
+        var dropdownDestinationValue = document.getElementById('destination_id').value;
+        if (dropdownDestinationValue === dropdownValue) {
+            alert('Оберіть різні адреси');
+            return false; // Prevent form submission
+        }
+    };
+ </script>

@@ -1,0 +1,92 @@
+﻿@model MobilityAssist.Models.Address
+
+@{
+    ViewBag.Title = "UpdateAddress";
+}
+@{
+    var streets = ViewData["streets"] as SelectList;
+}
+<h2>Редагувати адресу</h2>
+<h4>Адреса</h4>
+<hr />
+@if (ViewBag.Message != null)
+{
+    <p style="border: 1px solid red">
+        @ViewBag.Message
+    </p>
+}
+@using (Html.BeginForm("UpdateAddress", "Admin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(modelItem => modelItem.address_id)
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Дім</th>
+                <th scope="col">Вулиця</th>
+                <th scope="col">Чи приналаштована</th>
+                <th scope="col">Координати</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.address_numb, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.address_numb, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.address_numb, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.street_id, "street_id", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownList("street_id", streets, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.street_id, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </td>
+
+                <td style="font-weight:bolder">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.is_adaptated, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.is_adaptated)
+                                @Html.ValidationMessageFor(model => model.is_adaptated, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.address_coordx, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.address_coordx, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.address_coordx, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.address_coordy, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.address_coordy, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.address_coordy, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        <tbody>
+    </table>
+    <input type="submit" value="Save" class="btn btn-default" />
+}
+<a type="button" href="@Url.Action("AdminViewAddresses", "Admin")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
