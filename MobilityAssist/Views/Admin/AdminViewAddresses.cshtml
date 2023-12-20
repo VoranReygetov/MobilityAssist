@@ -1,4 +1,6 @@
-﻿@model IEnumerable<MobilityAssist.Models.GetAddresses_Result>
+﻿@model PagedList.IPagedList<MobilityAssist.Models.GetAddresses_Result>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "AdminViewAddresses";
@@ -6,11 +8,27 @@
 
 <h2>Всі адреси</h2>
 
+
+@using (Html.BeginForm())
+{
+    <p>
+        Знайти за вулицею або ID: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Пошук" />
+    </p>
+}
+
 <table class="table">
     <thead class="thead-dark">
         <tr>
-            <th scope="col">Адреса</th>
-            <th scope="col">Чи приналаштована</th>
+            <th>
+                @Html.ActionLink("ID", "AdminViewAddresses", new { sortOrder = ViewBag.IdSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th>
+                @Html.ActionLink("Адреса", "AdminViewAddresses", new { sortOrder = ViewBag.StreetSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th>
+                @Html.ActionLink("Чи приналаштована", "AdminViewAddresses", new { sortOrder = ViewBag.AdaptedSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
             <th scope="col">Координати</th>
             <th scope="col"></th>
             <th scope="col"></th>
@@ -20,6 +38,10 @@
         @foreach (var address in Model)
         {
             <tr>
+                <td>
+                    @address.address_id
+                </td>
+
                 <td>
                     @address.street
                 </td>
@@ -51,5 +73,11 @@
         }
     <tbody>
 </table>
+<br />
+Сторінка @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) з @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("AdminViewAddresses",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
 <a href="@Url.Action("CreateAddress", "Admin")" class="btn btn-success" style="margin-top:12px">Додати</a>
 <a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>

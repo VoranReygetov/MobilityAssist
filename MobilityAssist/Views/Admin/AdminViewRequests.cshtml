@@ -5,7 +5,7 @@
     ViewBag.Title = "ViewPublicRequests";
 }
 
-<h2>Запити по допомогу</h2>
+<h2>Всі Запити по допомогу</h2>
 @if (ViewBag.Message != null)
 {
     <p style="border: 1px solid red">
@@ -15,7 +15,7 @@
 @using (Html.BeginForm())
 {
     <p>
-        Знайти за Ім'ям або Адресою: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        Знайти за Ім'ям або ID: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
         <input type="submit" value="Пошук" />
     </p>
 }
@@ -24,16 +24,23 @@
     <thead class="thead-dark">
         <tr>
             <th>
-                @Html.ActionLink("Ім'я", "ViewPublicRequests", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+                @Html.ActionLink("ID", "AdminViewRequests", new { sortOrder = ViewBag.IdSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+
+            <th>
+                @Html.ActionLink("Ім'я", "AdminViewRequests", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Адреса", "ViewPublicRequests", new { sortOrder = ViewBag.AddressSortParm, currentFilter = ViewBag.CurrentFilter })
+                @Html.ActionLink("Адреса", "AdminViewRequests", new { sortOrder = ViewBag.AddressSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Тип допомоги", "ViewPublicRequests", new { sortOrder = ViewBag.HelpSortParm, currentFilter = ViewBag.CurrentFilter })
+                @Html.ActionLink("Тип допомоги", "AdminViewRequests", new { sortOrder = ViewBag.HelpSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Час", "ViewPublicRequests", new { sortOrder = ViewBag.TimeSortParm, currentFilter = ViewBag.CurrentFilter })
+                @Html.ActionLink("Час", "AdminViewRequests", new { sortOrder = ViewBag.TimeSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th>
+                @Html.ActionLink("Статус", "AdminViewRequests", new { sortOrder = ViewBag.StateSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th scope="col"></th>
         </tr>
@@ -44,6 +51,10 @@
 
             @Html.Hidden("request_id", item.request_id)
             <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.request_id)
+                </td>
+
                 <td>
                     @Html.DisplayFor(modelItem => item.User.first_name)
                 </td>
@@ -66,11 +77,21 @@
                     }
                     @formattedDifference
                 </td>
-
                 <td>
-                    @using (Html.BeginForm("AnswerPublicRequest", "App", new { request_id = item.request_id }, FormMethod.Post))
+                    @if (item.req_status == false)
                     {
-                        <button type="submit" class="btn btn-danger">Відповісти</button>
+                        <p style="font-weight:bold; color:darkred">Відкритий</p>
+                    }
+                    else
+                    {
+                        <p style="font-weight:bold; color:forestgreen">Закритий</p>
+                    }
+
+                </td>
+                <td>
+                    @using (Html.BeginForm("AdminViewRequests", "Admin", new { request_id = item.request_id }, FormMethod.Post))
+                    {
+                        <button type="submit" class="btn btn-danger">Видалити</button>
                     }
                 </td>
             </tr>
@@ -81,8 +102,9 @@
 <br />
 Сторінка @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) з @Model.PageCount
 
-@Html.PagedListPager(Model, page => Url.Action("ViewPublicRequests",
+@Html.PagedListPager(Model, page => Url.Action("AdminViewRequests",
     new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
 <div>
     <a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
 </div>
