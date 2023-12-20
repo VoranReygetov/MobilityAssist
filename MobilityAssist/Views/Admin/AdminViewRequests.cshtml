@@ -24,23 +24,23 @@
     <thead class="thead-dark">
         <tr>
             <th>
-                @Html.ActionLink("ID", "AdminViewRequests", new { sortOrder = ViewBag.IdSortParm })
+                @Html.ActionLink("ID", "AdminViewRequests", new { sortOrder = ViewBag.IdSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
 
             <th>
-                @Html.ActionLink("Ім'я", "AdminViewRequests", new { sortOrder = ViewBag.NameSortParm })
+                @Html.ActionLink("Ім'я", "AdminViewRequests", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Адреса", "AdminViewRequests", new { sortOrder = ViewBag.AddressSortParm })
+                @Html.ActionLink("Адреса", "AdminViewRequests", new { sortOrder = ViewBag.AddressSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Тип допомоги", "AdminViewRequests", new { sortOrder = ViewBag.HelpSortParm })
+                @Html.ActionLink("Тип допомоги", "AdminViewRequests", new { sortOrder = ViewBag.HelpSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Час", "AdminViewRequests", new { sortOrder = ViewBag.TimeSortParm })
+                @Html.ActionLink("Час", "AdminViewRequests", new { sortOrder = ViewBag.TimeSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Статус", "AdminViewRequests", new { sortOrder = ViewBag.StateSortParm })
+                @Html.ActionLink("Статус", "AdminViewRequests", new { sortOrder = ViewBag.StateSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th scope="col"></th>
         </tr>

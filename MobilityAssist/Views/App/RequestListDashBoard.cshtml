@@ -1,48 +1,46 @@
 ﻿@{
     ViewBag.Title = "RequestListDashBoard";
 }
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
+@{
+    var Models = ViewData["requestquery"] as PagedList.IPagedList<MobilityAssist.Models.GetRequests_Result>;
+        
+}
 <h2>Ваші запити</h2>
 @using (Html.BeginForm())
 {
     <p>
-        Знайти за Адресою: @Html.TextBox("SearchString")
+        Знайти за Адресою: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
         <input type="submit" value="Пошук" />
     </p>
 }
 <table class="table">
     <thead class="thead-dark">
         <tr>
-            @*<th scope="col">ID</th>*@
             <th scope="col">Початок</th>
             <th scope="col">Призначення</th>
-            @*<th scope="col">Необхідна допомога</th>
-                <th scope="col">Дата запиту</th>
-                <th scope="col">Відстань</th>
-                <th scope="col">Статус</th>*@
             <th>
-                @Html.ActionLink("Необхідна допомога", "RequestListDashBoard", new { sortOrder = ViewBag.HelpSortParm })
+                @Html.ActionLink("Необхідна допомога", "RequestListDashBoard", new { sortOrder = ViewBag.HelpSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Дата запиту", "RequestListDashBoard", new { sortOrder = ViewBag.DateSortParm })
+                @Html.ActionLink("Дата запиту", "RequestListDashBoard", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Відстань", "RequestListDashBoard", new { sortOrder = ViewBag.DistSortParm })
+                @Html.ActionLink("Відстань", "RequestListDashBoard", new { sortOrder = ViewBag.DistSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Статус", "RequestListDashBoard", new { sortOrder = ViewBag.StateSortParm })
+                @Html.ActionLink("Статус", "RequestListDashBoard", new { sortOrder = ViewBag.StateSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var req in @ViewData["requestquery"] as IEnumerable
-        <MobilityAssist.Models.GetRequests_Result>
+        @foreach (var req in Models
+
             )
         {
             <tr>
-                @*<td>
-                        @req.request_id
-                    </td>*@
                 <td>
                     @req.start_street_name, @req.start_address_numb
                 </td>
@@ -88,4 +86,9 @@
         }
     <tbody>
 </table>
+<br />
+Сторінка @(Models.PageCount < Models.PageNumber ? 0 : Models.PageNumber) з @Models.PageCount
+
+@Html.PagedListPager(Models, page => Url.Action("RequestListDashBoard",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
 <a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light">Повернутись</a>

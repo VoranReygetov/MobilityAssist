@@ -1,5 +1,6 @@
-﻿@model IEnumerable<MobilityAssist.Models.Request>
-
+﻿@model PagedList.IPagedList<MobilityAssist.Models.Request>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @{
     ViewBag.Title = "ViewPublicRequests";
 }
@@ -14,7 +15,7 @@
 @using (Html.BeginForm())
 {
     <p>
-        Знайти за Ім'ям або Адресою: @Html.TextBox("SearchString")
+        Знайти за Ім'ям або Адресою: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
         <input type="submit" value="Пошук" />
     </p>
 }
@@ -23,16 +24,16 @@
     <thead class="thead-dark">
         <tr>
             <th>
-                @Html.ActionLink("Ім'я", "ViewPublicRequests", new { sortOrder = ViewBag.NameSortParm })
+                @Html.ActionLink("Ім'я", "ViewPublicRequests", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Адреса", "ViewPublicRequests", new { sortOrder = ViewBag.AddressSortParm })
+                @Html.ActionLink("Адреса", "ViewPublicRequests", new { sortOrder = ViewBag.AddressSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Тип допомоги", "ViewPublicRequests", new { sortOrder = ViewBag.HelpSortParm })
+                @Html.ActionLink("Тип допомоги", "ViewPublicRequests", new { sortOrder = ViewBag.HelpSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Час", "ViewPublicRequests", new { sortOrder = ViewBag.TimeSortParm })
+                @Html.ActionLink("Час", "ViewPublicRequests", new { sortOrder = ViewBag.TimeSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th scope="col"></th>
         </tr>
@@ -77,6 +78,11 @@
 
     </tbody>
 </table>
+<br />
+Сторінка @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) з @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("ViewPublicRequests",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
 <div>
     <a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
 </div>

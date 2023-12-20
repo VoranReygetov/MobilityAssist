@@ -1,6 +1,5 @@
 ﻿@model PagedList.IPagedList<MobilityAssist.Models.GetAddresses_Result>
 @using PagedList.Mvc;
-@*@model  IEnumerable<MobilityAssist.Models.GetAddresses_Result>*@
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
@@ -22,13 +21,13 @@
     <thead class="thead-dark">
         <tr>
             <th>
-                @Html.ActionLink("ID", "AdminViewAddresses", new { sortOrder = ViewBag.IdSortParm })
+                @Html.ActionLink("ID", "AdminViewAddresses", new { sortOrder = ViewBag.IdSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Адреса", "AdminViewAddresses", new { sortOrder = ViewBag.StreetSortParm })
+                @Html.ActionLink("Адреса", "AdminViewAddresses", new { sortOrder = ViewBag.StreetSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th>
-                @Html.ActionLink("Чи приналаштована", "AdminViewAddresses", new { sortOrder = ViewBag.AdaptedSortParm })
+                @Html.ActionLink("Чи приналаштована", "AdminViewAddresses", new { sortOrder = ViewBag.AdaptedSortParm, currentFilter = ViewBag.CurrentFilter })
             </th>
             <th scope="col">Координати</th>
             <th scope="col"></th>

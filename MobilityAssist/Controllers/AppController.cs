@@ -13,6 +13,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
 using PagedList;
+using System.Web.UI;
 
 namespace MobilityAssist.Controllers
 {
@@ -131,13 +132,21 @@ namespace MobilityAssist.Controllers
         }
 
         [DisabledCheck]
-        public ActionResult RequestListDashBoard(string sortOrder, string searchString)
+        public ActionResult RequestListDashBoard(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.IdSortParm = String.IsNullOrEmpty(sortOrder) ? "id_desc" : "";
             ViewBag.HelpSortParm = sortOrder == "Help" ? "help_desc" : "Help";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.DistSortParm = sortOrder == "Dist" ? "dist_desc" : "Dist";
             ViewBag.StateSortParm = sortOrder == "State" ? "state_desc" : "State";
+
+            if (searchString != null) //If searchbar is not null -> first page
+                page = 1;
+            else
+                searchString = currentFilter;
+
+            ViewBag.CurrentFilter = searchString;
 
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
@@ -187,7 +196,9 @@ namespace MobilityAssist.Controllers
                         requestquery = requestquery.OrderBy(s => s.request_id);
                         break;
                 }
-                ViewData["requestquery"] = requestquery.ToList();
+                int pageSize = 5;
+                int pageNumber = (page ?? 1);
+                ViewData["requestquery"] = requestquery.ToList().ToPagedList(pageNumber, pageSize);
             }
             return View();
         }
@@ -369,13 +380,21 @@ namespace MobilityAssist.Controllers
         }
 
         [HelperCheck]
-        public ActionResult ViewPublicRequests(string sortOrder, string searchString)
+        public ActionResult ViewPublicRequests(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.IdSortParm = String.IsNullOrEmpty(sortOrder) ? "id_desc" : "";
             ViewBag.NameSortParm = sortOrder == "Name" ? "name_desc" : "Name";
             ViewBag.AddressSortParm = sortOrder == "Address" ? "address_desc" : "Address";
             ViewBag.HelpSortParm = sortOrder == "Help" ? "help_desc" : "Help";
             ViewBag.TimeSortParm = sortOrder == "Time" ? "time_desc" : "Time";
+
+            if (searchString != null) //If searchbar is not null -> first page
+                page = 1;
+            else
+                searchString = currentFilter;
+
+            ViewBag.CurrentFilter = searchString;
 
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
@@ -399,7 +418,7 @@ namespace MobilityAssist.Controllers
                     .Include(item => item.Address.Street)
                     .Include(item => item.HType) as IEnumerable<Request>;      //requests list with includes
 
-                if (!String.IsNullOrEmpty(searchString))        //searching bar for Adresses names & User name
+                if (!string.IsNullOrEmpty(searchString))        //searching bar for Adresses names & User name
                 {
                     int.TryParse(searchString, out int id);
                     viewreq = viewreq.Where(s => s.Address.address_numb.Contains(searchString)
@@ -440,7 +459,9 @@ namespace MobilityAssist.Controllers
                         viewreq = viewreq.OrderBy(s => s.request_id);
                         break;
                 }
-                return View("ViewPublicRequests", viewreq.ToList());
+                int pageSize = 5;
+                int pageNumber = (page ?? 1);
+                return View("ViewPublicRequests", viewreq.ToPagedList(pageNumber, pageSize));
             }
         }
 
