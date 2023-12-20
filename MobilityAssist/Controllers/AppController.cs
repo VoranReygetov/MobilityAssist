@@ -1,8 +1,10 @@
 ﻿using MobilityAssist.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -10,6 +12,7 @@ using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using PagedList;
 
 namespace MobilityAssist.Controllers
 {
@@ -23,7 +26,7 @@ namespace MobilityAssist.Controllers
 
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
-                if (Session["Role"].Equals(db.Roles.First(role => role.role_name == "disabled").role_id.ToString())) //check for role
+                if (Session["Role"].Equals(db.Roles.First(role => role.role_name == "Користувач").role_id.ToString())) //check for role
                     return RedirectToAction("DisabledDashBoard");
                 if (Session["Role"].Equals(db.Roles.First(role => role.role_name == "admin").role_id.ToString()))
                     return RedirectToAction("AdminDashBoard", "Admin");
@@ -128,16 +131,63 @@ namespace MobilityAssist.Controllers
         }
 
         [DisabledCheck]
-        public ActionResult RequestListDashBoard()
+        public ActionResult RequestListDashBoard(string sortOrder, string searchString)
         {
+            ViewBag.IdSortParm = String.IsNullOrEmpty(sortOrder) ? "id_desc" : "";
+            ViewBag.HelpSortParm = sortOrder == "Help" ? "help_desc" : "Help";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.DistSortParm = sortOrder == "Dist" ? "dist_desc" : "Dist";
+            ViewBag.StateSortParm = sortOrder == "State" ? "state_desc" : "State";
 
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
-                var requestquery = db.GetRequests(Convert.ToInt16(Session["UserID"]));
-                if (requestquery != null)
+                var requestquery = db.GetRequests(Convert.ToInt16(Session["UserID"])) as IEnumerable<GetRequests_Result>;
+
+                if (requestquery == null)
                 {
-                    ViewData["requestquery"] =  requestquery.ToList();
+                    return View();
                 }
+
+                if (!String.IsNullOrEmpty(searchString))        //searching bar for Start Adresses names & numbs
+                {
+                    requestquery = requestquery.Where(s => s.start_street_name.ToLower().Contains(searchString.ToLower())
+                                           || s.start_address_numb.Contains(searchString));
+                }
+
+                switch (sortOrder)      //page sorting switch
+                {
+                    case "id_desc":
+                        requestquery = requestquery.OrderByDescending(s => s.request_id);
+                        break;
+                    case "Help":
+                        requestquery = requestquery.OrderBy(s => s.help_name);
+                        break;
+                    case "help_desc":
+                        requestquery = requestquery.OrderByDescending(s => s.help_name);
+                        break;
+                    case "Date":
+                        requestquery = requestquery.OrderBy(s => s.req_date);
+                        break;
+                    case "date_desc":
+                        requestquery = requestquery.OrderByDescending(s => s.req_date);
+                        break;
+                    case "State":
+                        requestquery = requestquery.OrderByDescending(s => s.req_status);
+                        break;
+                    case "state_desc":
+                        requestquery = requestquery.OrderBy(s => s.req_status);
+                        break;
+                    case "Dist":
+                        requestquery = requestquery.OrderBy(s => s.distance);
+                        break;
+                    case "dist_desc":
+                        requestquery = requestquery.OrderByDescending(s => s.distance);
+                        break;
+                    default:
+                        requestquery = requestquery.OrderBy(s => s.request_id);
+                        break;
+                }
+                ViewData["requestquery"] = requestquery.ToList();
             }
             return View();
         }
@@ -319,13 +369,18 @@ namespace MobilityAssist.Controllers
         }
 
         [HelperCheck]
-        public ActionResult ViewPublicRequests()
+        public ActionResult ViewPublicRequests(string sortOrder, string searchString)
         {
+            ViewBag.IdSortParm = String.IsNullOrEmpty(sortOrder) ? "id_desc" : "";
+            ViewBag.NameSortParm = sortOrder == "Name" ? "name_desc" : "Name";
+            ViewBag.AddressSortParm = sortOrder == "Address" ? "address_desc" : "Address";
+            ViewBag.HelpSortParm = sortOrder == "Help" ? "help_desc" : "Help";
+            ViewBag.TimeSortParm = sortOrder == "Time" ? "time_desc" : "Time";
 
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
                 var user_id = Convert.ToInt32(Session["UserID"]);
-                if (db.Responces.Where(responce => responce.user_id == user_id)
+                if (db.Responces.Where(responce => responce.user_id == user_id)     //If any already-answered requests by a User
                     .Where(responce => responce.Request.req_status == false).Any())
                 {
                     return RedirectToAction("GetRouteToRequest");
@@ -342,8 +397,50 @@ namespace MobilityAssist.Controllers
                 var viewreq = query.Include(item => item.User)
                     .Include(item => item.Address)
                     .Include(item => item.Address.Street)
-                    .Include(item => item.HType).ToList();      //requests list with includes
-                return View("ViewPublicRequests", viewreq);
+                    .Include(item => item.HType) as IEnumerable<Request>;      //requests list with includes
+
+                if (!String.IsNullOrEmpty(searchString))        //searching bar for Adresses names & User name
+                {
+                    int.TryParse(searchString, out int id);
+                    viewreq = viewreq.Where(s => s.Address.address_numb.Contains(searchString)
+                                           || s.Address.Street.street_name.ToLower().Contains(searchString.ToLower())
+                                           || s.User.first_name.Contains(searchString));
+                }
+
+                switch (sortOrder)      //page sorting switch
+                {
+                    case "id_desc":
+                        viewreq = viewreq.OrderByDescending(s => s.request_id);
+                        break;
+                    case "Address":
+                        viewreq = viewreq.OrderBy(s => s.Address.address_numb).OrderBy(s => s.Address.Street.street_name);
+                        break;
+                    case "address_desc":
+                        viewreq = viewreq.OrderBy(s => s.Address.address_numb).OrderByDescending(s => s.Address.Street.street_name);
+                        break;
+                    case "Name":
+                        viewreq = viewreq.OrderBy(s => s.User.first_name);
+                        break;
+                    case "name_desc":
+                        viewreq = viewreq.OrderByDescending(s => s.User.first_name);
+                        break;
+                    case "Help":
+                        viewreq = viewreq.OrderBy(s => s.HType.help_name);
+                        break;
+                    case "help_desc":
+                        viewreq = viewreq.OrderByDescending(s => s.HType.help_name);
+                        break;
+                    case "Time":
+                        viewreq = viewreq.OrderBy(s => s.req_date);
+                        break;
+                    case "time_desc":
+                        viewreq = viewreq.OrderByDescending(s => s.req_date);
+                        break;
+                    default:
+                        viewreq = viewreq.OrderBy(s => s.request_id);
+                        break;
+                }
+                return View("ViewPublicRequests", viewreq.ToList());
             }
         }
 

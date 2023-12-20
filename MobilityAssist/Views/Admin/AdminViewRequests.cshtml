@@ -1,0 +1,110 @@
+﻿@model PagedList.IPagedList<MobilityAssist.Models.Request>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{
+    ViewBag.Title = "ViewPublicRequests";
+}
+
+<h2>Всі Запити по допомогу</h2>
+@if (ViewBag.Message != null)
+{
+    <p style="border: 1px solid red">
+        @ViewBag.Message
+    </p>
+}
+@using (Html.BeginForm())
+{
+    <p>
+        Знайти за Ім'ям або ID: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Пошук" />
+    </p>
+}
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                @Html.ActionLink("ID", "AdminViewRequests", new { sortOrder = ViewBag.IdSortParm })
+            </th>
+
+            <th>
+                @Html.ActionLink("Ім'я", "AdminViewRequests", new { sortOrder = ViewBag.NameSortParm })
+            </th>
+            <th>
+                @Html.ActionLink("Адреса", "AdminViewRequests", new { sortOrder = ViewBag.AddressSortParm })
+            </th>
+            <th>
+                @Html.ActionLink("Тип допомоги", "AdminViewRequests", new { sortOrder = ViewBag.HelpSortParm })
+            </th>
+            <th>
+                @Html.ActionLink("Час", "AdminViewRequests", new { sortOrder = ViewBag.TimeSortParm })
+            </th>
+            <th>
+                @Html.ActionLink("Статус", "AdminViewRequests", new { sortOrder = ViewBag.StateSortParm })
+            </th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+            @Html.Hidden("request_id", item.request_id)
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.request_id)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.first_name)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address.Street.street_name), @Html.DisplayFor(modelItem => item.Address.address_numb)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.HType.help_name)
+                </td>
+
+                <td>
+                    @{
+                        TimeSpan timeDifference = DateTime.Now - item.req_date;
+                        string formattedDifference = string.Format("{0} годин, {1} хвилин, {2} секунд",
+                                                ((int)timeDifference.TotalHours),
+                                                timeDifference.Minutes,
+                                                timeDifference.Seconds);
+                    }
+                    @formattedDifference
+                </td>
+                <td>
+                    @if (item.req_status == false)
+                    {
+                        <p style="font-weight:bold; color:darkred">Відкритий</p>
+                    }
+                    else
+                    {
+                        <p style="font-weight:bold; color:forestgreen">Закритий</p>
+                    }
+
+                </td>
+                <td>
+                    @using (Html.BeginForm("AdminViewRequests", "Admin", new { request_id = item.request_id }, FormMethod.Post))
+                    {
+                        <button type="submit" class="btn btn-danger">Видалити</button>
+                    }
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<br />
+Сторінка @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) з @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("AdminViewRequests",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+<div>
+    <a type="button" href="@Url.Action("UserDashBoard", "App")" class="btn btn-light" style="margin-top:12px">Повернутись</a>
+</div>

@@ -4,31 +4,36 @@
     ViewBag.Title = "ViewPublicRequests";
 }
 
-<h2>Запити про допомогу</h2>
+<h2>Запити по допомогу</h2>
 @if (ViewBag.Message != null)
 {
     <p style="border: 1px solid red">
         @ViewBag.Message
     </p>
 }
-
-@{
-    bool admin = ViewData["role"] != null && ViewData["role"].ToString() == "admin";
+@using (Html.BeginForm())
+{
+    <p>
+        Знайти за Ім'ям або Адресою: @Html.TextBox("SearchString")
+        <input type="submit" value="Пошук" />
+    </p>
 }
-
 
 <table class="table">
     <thead class="thead-dark">
         <tr>
-            <th scope="col">Ім'я</th>
-            <th scope="col">Адреса</th>
-            <th scope="col">Тип допомоги</th>
-            <th scope="col">Час</th>
-            @if (admin)
-            {
-                <th scope="col">Статус</th>
-
-            }
+            <th>
+                @Html.ActionLink("Ім'я", "ViewPublicRequests", new { sortOrder = ViewBag.NameSortParm })
+            </th>
+            <th>
+                @Html.ActionLink("Адреса", "ViewPublicRequests", new { sortOrder = ViewBag.AddressSortParm })
+            </th>
+            <th>
+                @Html.ActionLink("Тип допомоги", "ViewPublicRequests", new { sortOrder = ViewBag.HelpSortParm })
+            </th>
+            <th>
+                @Html.ActionLink("Час", "ViewPublicRequests", new { sortOrder = ViewBag.TimeSortParm })
+            </th>
             <th scope="col"></th>
         </tr>
     </thead>
@@ -54,42 +59,17 @@
                     @{
                         TimeSpan timeDifference = DateTime.Now - item.req_date;
                         string formattedDifference = string.Format("{0} годин, {1} хвилин, {2} секунд",
-                                                timeDifference.Hours,
+                                                ((int)timeDifference.TotalHours),
                                                 timeDifference.Minutes,
                                                 timeDifference.Seconds);
                     }
                     @formattedDifference
                 </td>
-                @if (admin) 
-                 {
-                    <td>
-                        @if (item.req_status == false)
-                        {
-                            <p style="font-weight:bold; color:darkred">Відкритий</p>
-                        }
-                        else
-                        {
-                            <p style="font-weight:bold; color:forestgreen">Закритий</p>
-                        }
-
-                    </td>
-                 }
 
                 <td>
-                    @if (admin)
+                    @using (Html.BeginForm("AnswerPublicRequest", "App", new { request_id = item.request_id }, FormMethod.Post))
                     {
-                        using (Html.BeginForm("AdminSelectRequest", "Admin", new { request_id = item.request_id }, FormMethod.Post))
-                        {
-                            <button type="submit" class="btn btn-danger">Видалити</button>
-                        }
-                    }
-                    else
-                    {
-
-                        using (Html.BeginForm("AnswerPublicRequest", "App", new { request_id = item.request_id }, FormMethod.Post))
-                        {
-                            <button type="submit" class="btn btn-danger">Відповісти</button>
-                        }
+                        <button type="submit" class="btn btn-danger">Відповісти</button>
                     }
                 </td>
             </tr>

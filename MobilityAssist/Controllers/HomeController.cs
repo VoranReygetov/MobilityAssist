@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using System.Web.UI.WebControls;
 
 namespace MobilityAssist.Controllers
 {
@@ -56,7 +57,7 @@ namespace MobilityAssist.Controllers
         {
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
-                var rolelist = db.Roles.OrderBy(item => item.role_id).ToList();
+                var rolelist = db.Roles.Where(role => role.role_name != "admin").OrderBy(item => item.role_id).ToList();
                 ViewData["rolelist"] = rolelist;
             }
             return View();

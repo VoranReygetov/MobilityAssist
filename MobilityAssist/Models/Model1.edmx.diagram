@@ -4,12 +4,12 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="7a09ec01fd35401a9cfe0524e6e23c59" Name="Diagram1" ZoomLevel="65">
+      <Diagram DiagramId="7a09ec01fd35401a9cfe0524e6e23c59" Name="Diagram1" ZoomLevel="55">
         <EntityTypeShape EntityType="MobilityAssistModel.Address" Width="1.5" PointX="3" PointY="2.875" IsExpanded="true" />
         <EntityTypeShape EntityType="MobilityAssistModel.Building" Width="1.5" PointX="5.25" PointY="3.25" IsExpanded="true" />
         <EntityTypeShape EntityType="MobilityAssistModel.HType" Width="1.5" PointX="6" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MobilityAssistModel.Request" Width="1.5" PointX="8.25" PointY="2.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="MobilityAssistModel.Responce" Width="1.5" PointX="10.5" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MobilityAssistModel.Responce" Width="1.5" PointX="10.5" PointY="5.125" IsExpanded="true" />
         <EntityTypeShape EntityType="MobilityAssistModel.Role" Width="1.5" PointX="3.75" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MobilityAssistModel.Street" Width="1.5" PointX="0.75" PointY="3.5" IsExpanded="true" />
         <EntityTypeShape EntityType="MobilityAssistModel.sysdiagram" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
