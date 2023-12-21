@@ -5,12 +5,12 @@
 }
 @{
     var selecthelp = ViewData["helplist"] as SelectList;
-    var selectaddress = ViewData["addresslist"] as SelectList;//No empty option
+    var selectaddress = ViewData["addresslist"] as SelectList;      //No empty option
 }
 @{
     var emptyOption = new SelectListItem { Text = "", Value = "" };
     var addressListWithEmptyOption = new List<SelectListItem> { emptyOption };
-    addressListWithEmptyOption.AddRange(selectaddress);//With empty option
+    addressListWithEmptyOption.AddRange(selectaddress);     //With empty option
 }
 
 @using (Html.BeginForm("RequestDashBoard", "App", FormMethod.Post, htmlAttributes: new { @id = "request_create" }))
