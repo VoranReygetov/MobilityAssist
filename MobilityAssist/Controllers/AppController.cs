@@ -266,7 +266,7 @@ namespace MobilityAssist.Controllers
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
 
-                var helpuser = db.Users.Where(user => user.email == email & user.Role.role_name == "support").FirstOrDefault();
+                var helpuser = db.Users.Where(user => user.email == email & user.Role.role_name == "Супровідник").FirstOrDefault();
                 if (helpuser == null)
                 {
                     TempData["Alert"] = "Немає помічника з такою поштою";

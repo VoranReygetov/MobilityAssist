@@ -46,11 +46,6 @@ namespace MobilityAssist.Controllers
 
             using (MobilityAssistEntities db = new MobilityAssistEntities())
             {
-                var user_id = Convert.ToInt32(Session["UserID"]);
-
-                ViewData["role"] = db.Users.Find(user_id).Role.role_name;
-                ViewData["addresslist"] = db.GetAddresses().ToList();
-
                 var query = from req in db.Requests select req;
                 var viewreq = query
                     .Include(item => item.User)

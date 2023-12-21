@@ -1,16 +1,16 @@
 ﻿@model MobilityAssist.Models.Request
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 @{
     ViewBag.Title = "Make Request";
 }
 @{
     var selecthelp = ViewData["helplist"] as SelectList;
-    var selectaddress = ViewData["addresslist"] as SelectList;//No empty option
+    var selectaddress = ViewData["addresslist"] as SelectList;      //No empty option
 }
 @{
     var emptyOption = new SelectListItem { Text = "", Value = "" };
     var addressListWithEmptyOption = new List<SelectListItem> { emptyOption };
-    addressListWithEmptyOption.AddRange(selectaddress);//With empty option
+    addressListWithEmptyOption.AddRange(selectaddress);     //With empty option
 }
 
 @using (Html.BeginForm("RequestDashBoard", "App", FormMethod.Post, htmlAttributes: new { @id = "request_create" }))
@@ -75,6 +75,24 @@
 </div>
 
 <script>
+
+    $(document).ready(function () {
+        // Get references to the dropdowns
+        var helpDropdown = $("#help_id");
+        var destinationDropdown = $("#destination_id");
+
+        // Disable destination dropdown initially if help_id is not 3
+        if (helpDropdown.val() !== "3") {
+            destinationDropdown.prop("disabled", true);
+        }
+
+        // Attach change event handler to help dropdown
+        helpDropdown.change(function () {
+            // Enable or disable destination dropdown based on the selected value
+            destinationDropdown.prop("disabled", $(this).val() !== "2");
+        });
+    });
+
     document.getElementById('request_create').onsubmit = function () {
         var dropdownValue = document.getElementById('address_id').value;
         if (dropdownValue === "") {
@@ -85,6 +103,6 @@
         if (dropdownDestinationValue === dropdownValue) {
             alert('Оберіть різні адреси');
             return false; // Prevent form submission
-        }
+        }     
     };
 </script>
