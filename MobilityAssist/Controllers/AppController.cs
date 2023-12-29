@@ -19,7 +19,7 @@ namespace MobilityAssist.Controllers
 {
     public class AppController : Controller
     {
-        MobilityAssistEntities db = new MobilityAssistEntities()
+        MobilityAssistEntities db = new MobilityAssistEntities();
         Random rnd = new Random();
         public ActionResult UserDashBoard()
         {
@@ -151,7 +151,8 @@ namespace MobilityAssist.Controllers
                                        || s.start_address_numb.Contains(searchString));
             }
 
-            switch (sortOrder)      //page sorting switch
+            //page sorting switch
+            switch (sortOrder)     
             {
                 case "id_desc":
                     requestquery = requestquery.OrderByDescending(s => s.request_id);
@@ -388,7 +389,8 @@ namespace MobilityAssist.Controllers
                                        || s.User.first_name.Contains(searchString));
             }
 
-            switch (sortOrder)      //page sorting switch
+            //page sorting switch
+            switch (sortOrder)      
             {
                 case "id_desc":
                     viewreq = viewreq.OrderByDescending(s => s.request_id);

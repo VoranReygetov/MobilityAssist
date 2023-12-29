@@ -45,21 +45,22 @@ namespace MobilityAssist.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-                var query = from req in db.Requests select req;
-                var viewreq = query
-                    .Include(item => item.User)
-                    .Include(item => item.Address)
-                    .Include(item => item.Address.Street)
-                    .Include(item => item.HType) as IEnumerable<Request>;       //all requests list with includes
-                
-                if (!String.IsNullOrEmpty(searchString))        //searching bar 
-                {
-                    int.TryParse(searchString, out int id);
-                    viewreq = viewreq.Where(s => s.User.first_name.Contains(searchString)
-                                           || s.request_id == id);
-                }
+            var query = from req in db.Requests select req;
+            var viewreq = query
+                .Include(item => item.User)
+                .Include(item => item.Address)
+                .Include(item => item.Address.Street)
+                .Include(item => item.HType) as IEnumerable<Request>;       //all requests list with includes
 
-                switch (sortOrder)      //page sorting switch
+            if (!String.IsNullOrEmpty(searchString))        //searching bar 
+            {
+                int.TryParse(searchString, out int id);
+                viewreq = viewreq.Where(s => s.User.first_name.Contains(searchString)
+                                       || s.request_id == id);
+            }
+
+            //page sorting switch
+            switch (sortOrder)      
                 {
                     case "id_desc":
                         viewreq = viewreq.OrderByDescending(s => s.request_id);
@@ -98,9 +99,10 @@ namespace MobilityAssist.Controllers
                         viewreq = viewreq.OrderBy(s => s.request_id);
                         break;
                 }
-                int pageSize = 10;      //instances per page
-                int pageNumber = (page ?? 1);
-                return View(viewreq.ToPagedList(pageNumber, pageSize));
+
+            int pageSize = 10;      //instances per page
+            int pageNumber = (page ?? 1);
+            return View(viewreq.ToPagedList(pageNumber, pageSize));
 
 
         }
@@ -110,16 +112,14 @@ namespace MobilityAssist.Controllers
             if (Request.HttpMethod != "POST" || request_id == null)
                 return RedirectToAction("UserDashBoard", "App");
 
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
-            {
-                ViewData["addresslist"] = db.GetAddresses().ToList();
-                var request = db.Requests
-                    .Include(item => item.User)
-                    .Include(item => item.Address)
-                    .Include(item => item.Address.Street)
-                    .Include(item => item.HType).First(req => req.request_id == request_id); //request with includes
-                return View(request);
-            }
+            ViewData["addresslist"] = db.GetAddresses().ToList();
+            var request = db.Requests
+                .Include(item => item.User)
+                .Include(item => item.Address)
+                .Include(item => item.Address.Street)
+                .Include(item => item.HType).First(req => req.request_id == request_id); //request with includes
+
+            return View(request);
         }
 
         [HttpPost]
@@ -160,6 +160,8 @@ namespace MobilityAssist.Controllers
                 addresses = addresses.Where(s => s.street.Contains(searchString)
                                        || s.address_id == id);
             }
+
+            //page sorting switch
             switch (sortOrder)
             {
                 case "id_desc":
@@ -188,20 +190,16 @@ namespace MobilityAssist.Controllers
 
         }
 
-
         public ActionResult UpdateAddress(int? address_id)
         {
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            var address = db.Addresses.Find(address_id);
+            if (address != null)
             {
-                var address = db.Addresses.Find(address_id);
-                if (address != null)
-                {
-                    SelectList selectstreets = new SelectList(db.Streets.ToList(), "street_id", "street_name");
-                    ViewData["streets"] = selectstreets;
-                    return View(address);
-                }
-                return RedirectToAction("AdminViewAddresses");
+                SelectList selectstreets = new SelectList(db.Streets.ToList(), "street_id", "street_name");
+                ViewData["streets"] = selectstreets;
+                return View(address);
             }
+            return RedirectToAction("AdminViewAddresses");
         }
 
         [HttpPost]
