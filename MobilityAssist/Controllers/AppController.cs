@@ -232,9 +232,7 @@ namespace MobilityAssist.Controllers
             var extrausers = db.Users.Where(user => user.user_id == id).First().Users1;
 
             if (extrausers.Any())
-            {
                 ViewData.Add("extrusers", extrausers.ToList());
-            }
 
             return View();
         }
@@ -314,7 +312,6 @@ namespace MobilityAssist.Controllers
             try
             {
                 request.User = db.Users.Find(Convert.ToInt16(Session["UserID"]));
-                request.req_date = DateTime.Now;
                 request.HType = db.HTypes.Where(help => help.help_name == "Екстрена").First();
                 db.Requests.Add(request);
                 db.SaveChanges();
