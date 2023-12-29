@@ -12,6 +12,7 @@ namespace MobilityAssist.Controllers
 {
     public class HomeController : Controller
     {
+        MobilityAssistEntities db = new MobilityAssistEntities();
         public ActionResult Index()
         {
             return View();
@@ -37,29 +38,24 @@ namespace MobilityAssist.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(User objUser)
         {
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            var obj = db.Users.Where(a => a.email.Equals(objUser.email) && a.password.Equals(objUser.password));
+            if (!obj.Any())
             {
-                var obj = db.Users.Where(a => a.email.Equals(objUser.email) && a.password.Equals(objUser.password));
-                if (!obj.Any())
-                {
-                    ViewBag.Message = "Credentials is not valid";
-                    return View();
-                }
-                Session["UserID"] = obj.First().user_id.ToString();
-                Session["FirstName"] = obj.First().first_name.ToString();
-                Session["Role"] = obj.First().user_role.ToString();
-                return RedirectToAction("UserDashBoard", "App");
+                ViewBag.Message = "Credentials is not valid";
+                return View();
             }
+            Session["UserID"] = obj.First().user_id.ToString();
+            Session["FirstName"] = obj.First().first_name.ToString();
+            Session["Role"] = obj.First().user_role.ToString();
+            return RedirectToAction("UserDashBoard", "App");
 
         }
         [HttpGet]
         public ActionResult Register()
         {
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
-            {
-                var rolelist = db.Roles.Where(role => role.role_name != "admin").OrderBy(item => item.role_id).ToList();
-                ViewData["rolelist"] = rolelist;
-            }
+            var rolelist = db.Roles.Where(role => role.role_name != "admin").OrderBy(item => item.role_id).ToList();
+            ViewData["rolelist"] = rolelist;
+
             return View();
         }
 
@@ -69,28 +65,23 @@ namespace MobilityAssist.Controllers
         {
             if (ModelState.IsValid)
             {
-                using (MobilityAssistEntities db = new MobilityAssistEntities())
+                try
                 {
-                    try
-                    {
-                        db.Users.Add(objUser);
-                        db.SaveChanges();
-                        Session["UserID"] = objUser.user_id.ToString();
-                        Session["FirstName"] = objUser.first_name.ToString();
-                        Session["Role"] = objUser.user_role.ToString();
-                        return RedirectToAction("UserDashBoard", "App");
-                    }
-                    catch
-                    {
-                        ViewBag.Message = "Credentials is not valid";
-                    }
+                    db.Users.Add(objUser);
+                    db.SaveChanges();
+                    Session["UserID"] = objUser.user_id.ToString();
+                    Session["FirstName"] = objUser.first_name.ToString();
+                    Session["Role"] = objUser.user_role.ToString();
+                    return RedirectToAction("UserDashBoard", "App");
+                }
+                catch
+                {
+                    ViewBag.Message = "Credentials is not valid";
                 }
             }
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
-            {
-                var rolelist = db.Roles.OrderBy(item => item.role_id).ToList();
-                ViewData["rolelist"] = rolelist;
-            }
+            var rolelist = db.Roles.OrderBy(item => item.role_id).ToList();
+            ViewData["rolelist"] = rolelist;
+
             return View();
         }
         public ActionResult LogOut()

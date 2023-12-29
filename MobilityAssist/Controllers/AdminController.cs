@@ -18,6 +18,7 @@ namespace MobilityAssist.Controllers
     [AdminCheck]
     public class AdminController : Controller
     {
+        MobilityAssistEntities db = new MobilityAssistEntities();
 
         public ActionResult AdminDashBoard()
         {
@@ -44,8 +45,6 @@ namespace MobilityAssist.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
-            {
                 var query = from req in db.Requests select req;
                 var viewreq = query
                     .Include(item => item.User)
@@ -102,7 +101,7 @@ namespace MobilityAssist.Controllers
                 int pageSize = 10;      //instances per page
                 int pageNumber = (page ?? 1);
                 return View(viewreq.ToPagedList(pageNumber, pageSize));
-            }
+
 
         }
 
@@ -126,21 +125,18 @@ namespace MobilityAssist.Controllers
         [HttpPost]
         public ActionResult AdminDeleteRequest(int? request_id)
         {
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            try
             {
-                try
-                {
-                    var request = db.Requests.Find(request_id);
-                    db.Requests.Remove(request);
-                    db.SaveChanges();
-                }
-                catch
-                {
-                    return RedirectToAction("AdminViewRequests");
-                }
-
+                var request = db.Requests.Find(request_id);
+                db.Requests.Remove(request);
+                db.SaveChanges();
+            }
+            catch
+            {
                 return RedirectToAction("AdminViewRequests");
             }
+
+            return RedirectToAction("AdminViewRequests");
         }
 
         public ActionResult AdminViewAddresses(string sortOrder, string currentFilter, string searchString, int? page)
@@ -156,43 +152,40 @@ namespace MobilityAssist.Controllers
                 searchString = currentFilter;
 
             ViewBag.CurrentFilter = searchString;
+            var addresses = from address in db.GetAddresses() select address;
 
-
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            if (!string.IsNullOrEmpty(searchString))
             {
-                var addresses = from address in db.GetAddresses() select address;
-
-                if (!string.IsNullOrEmpty(searchString))
-                {
-                    int.TryParse(searchString, out int id);
-                    addresses = addresses.Where(s => s.street.Contains(searchString)
-                                           || s.address_id == id);
-                }
-                switch (sortOrder)
-                {
-                    case "id_desc":
-                        addresses = addresses.OrderByDescending(s => s.address_id);
-                        break;
-                    case "Street":
-                        addresses = addresses.OrderBy(s => s.street);
-                        break;
-                    case "street_desc":
-                        addresses = addresses.OrderByDescending(s => s.street);
-                        break;
-                    case "Adapted":
-                        addresses = addresses.OrderByDescending(s => s.is_adaptated);
-                        break;
-                    case "is_adapted_desc":
-                        addresses = addresses.OrderBy(s => s.is_adaptated);
-                        break;
-                    default:
-                        addresses = addresses.OrderBy(s => s.address_id);
-                        break;
-                }
-                int pageSize = 10;
-                int pageNumber = (page ?? 1);
-                return View(addresses.ToList().ToPagedList(pageNumber, pageSize));
+                int.TryParse(searchString, out int id);
+                addresses = addresses.Where(s => s.street.Contains(searchString)
+                                       || s.address_id == id);
             }
+            switch (sortOrder)
+            {
+                case "id_desc":
+                    addresses = addresses.OrderByDescending(s => s.address_id);
+                    break;
+                case "Street":
+                    addresses = addresses.OrderBy(s => s.street);
+                    break;
+                case "street_desc":
+                    addresses = addresses.OrderByDescending(s => s.street);
+                    break;
+                case "Adapted":
+                    addresses = addresses.OrderByDescending(s => s.is_adaptated);
+                    break;
+                case "is_adapted_desc":
+                    addresses = addresses.OrderBy(s => s.is_adaptated);
+                    break;
+                default:
+                    addresses = addresses.OrderBy(s => s.address_id);
+                    break;
+            }
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(addresses.ToList().ToPagedList(pageNumber, pageSize));
+
+
         }
 
 
@@ -214,76 +207,62 @@ namespace MobilityAssist.Controllers
         [HttpPost]
         public ActionResult UpdateAddress(Address new_address)
         {
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            var address = db.Addresses.Find(new_address.address_id);
+            if (address != null)
             {
-                var address = db.Addresses.Find(new_address.address_id);
-                if (address != null)
+                // Update properties with modified values
+                address.address_numb = new_address.address_numb;
+                address.street_id = new_address.street_id;
+                address.is_adaptated = new_address.is_adaptated;
+                address.address_coordx = new_address.address_coordx;
+                address.address_coordy = new_address.address_coordy;
+                try
                 {
-                    // Update properties with modified values
-                    address.address_numb = new_address.address_numb;
-                    address.street_id = new_address.street_id;
-                    address.is_adaptated = new_address.is_adaptated;
-                    address.address_coordx = new_address.address_coordx;
-                    address.address_coordy = new_address.address_coordy;
-                    try
-                    {
-                        db.SaveChanges();
-                    }
-                    catch
-                    {
-                        ViewBag.Message = "Вже є такі дані";
-                        return View(address.street_id);
-                    }
+                    db.SaveChanges();
                 }
-                return RedirectToAction("AdminViewAddresses");
+                catch
+                {
+                    ViewBag.Message = "Вже є такі дані";
+                    return View(address.street_id);
+                }
             }
+            return RedirectToAction("AdminViewAddresses");
+
         }
 
 
         public ActionResult DeletePageAddress(int? address_id)
         {
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
+            var address = db.Addresses.Include(item => item.Street).Where(item => item.address_id == address_id).First();
+            if (address != null)
             {
-                var address = db.Addresses.Include(item => item.Street).Where(item => item.address_id == address_id).First();
-                if (address != null)
-                {
-                    return View(address);
-                }
-                return RedirectToAction("AdminViewAddresses");
+                return View(address);
             }
+            return RedirectToAction("AdminViewAddresses");
         }
 
         [HttpPost]
         public ActionResult DeleteAddress(int? address_id)
         {
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
-            {
-                var address = db.Addresses.Find(address_id);
-                db.Addresses.Remove(address);
-                db.SaveChanges();
-                return RedirectToAction("AdminViewAddresses");
-            }
+            var address = db.Addresses.Find(address_id);
+            db.Addresses.Remove(address);
+            db.SaveChanges();
+            return RedirectToAction("AdminViewAddresses");
         }
 
         public ActionResult CreateAddress()
         {
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
-            {
-                SelectList selectstreets = new SelectList(db.Streets.ToList(), "street_id", "street_name");
-                ViewData["streets"] = selectstreets;
-                return View();
-            }
+            SelectList selectstreets = new SelectList(db.Streets.ToList(), "street_id", "street_name");
+            ViewData["streets"] = selectstreets;
+            return View();
         }
 
         [HttpPost]
         public ActionResult CreateAddress(Address address)
         {
-            using (MobilityAssistEntities db = new MobilityAssistEntities())
-            {
-                db.Addresses.Add(address);
-                db.SaveChanges();
-                return RedirectToAction("AdminViewAddresses");
-            }
+            db.Addresses.Add(address);
+            db.SaveChanges();
+            return RedirectToAction("AdminViewAddresses");
         }
     }
 }
